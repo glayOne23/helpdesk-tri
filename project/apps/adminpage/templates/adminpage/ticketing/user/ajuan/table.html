@@ -1,0 +1,347 @@
+{% extends 'adminpage/layout/base.html' %}
+{% load adminpage_tags %}
+
+{% block content %}
+  <div class="page-content container">
+    <div class="page-header border-0 pb-3">
+      <h1 class="page-title text-primary-d2 text-150">
+        {{ request.path|getUrlSegment:2 }}
+        <small class="page-info text-secondary-d2 text-nowrap">
+          <i class="fa fa-angle-double-right text-80"></i>
+          {{ request.path|getUrlSegment:3 }}
+        </small>
+      </h1>
+
+      <div class="page-tools mt-3 mt-sm-0 mb-sm-n1">
+        <!-- dataTables search box will be inserted here dynamically -->
+      </div>
+    </div>
+
+
+    <div class="card bcard h-auto">
+      <form method="post" autocomplete="off" class="border-t-3 brc-blue-m2">
+
+        <table id="datatable" class="d-style w-100 table text-dark-m1 text-95 border-y-1 brc-black-tp11 collapsed dtr-table">
+          <!-- add `collapsed` by default ... it will be removed by default -->
+          <!-- thead with .sticky-nav -->
+          <thead class="sticky-nav text-secondary-m1 text-uppercase text-85">
+            <tr>
+              <th class="td-toggle-details border-0 bgc-white shadow-sm">
+                <i class="fa fa-angle-double-down ml-2"></i>
+              </th>              
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                ID Tiket
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Pengaju
+              </th>              
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Keluhan
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Detail Keluhan
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Kategori
+              </th>     
+              
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Status
+              </th>   
+              
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Tanggal Ajuan
+              </th>              
+
+              <th class="border-0 bgc-white shadow-sm w-2">
+                Aksi
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="pos-rel">
+          
+          </tbody>
+
+        </table>
+
+      </form>
+    </div>
+
+  </div>
+
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+
+  $(document).ready(function(){
+    let tahun = '{{ tahun_terpilih }}';
+
+
+    var tableId = '#datatable'
+
+    var tableHead = document.querySelector('.sticky-nav')
+    tableHead.addEventListener('sticky-change', function(e) {
+      // when  thead becomes sticky, add is-stuck class to it (which adds a border-bottom to it)
+      this.classList.toggle('is-stuck', e.detail.isSticky)
+    })
+
+
+
+    $.extend( true, $.fn.dataTable.defaults, {
+      dom:        
+        "<'row'<'col-12 col-sm-2'l><'col-12 col-sm-7 filter_div'><'col-12 col-sm-3 text-right table-tools-col'f>>" +
+        "<'row'<'col-12'tr>>" +
+        "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
+      renderer: 'bootstrap'
+    })
+
+    let url = "{% url 'adminpage:ticketing.user.ajuan.json' %}"
+    // url = url + `?tahun=${tahun}`
+    
+    var $_table = $(tableId).DataTable({
+      ajax: {
+        url: url,
+        type: 'POST',
+        dataSrc: '',        
+        data: function (d) {
+          d.csrfmiddlewaretoken = '{{ csrf_token }}',
+          d.tahun = tahun          
+        }        
+      },      
+
+      buttons: {
+        dom: {
+          button: {
+            className: 'btn' //remove the default 'btn-secondary'
+          },
+          container: {
+            className: 'dt-buttons btn-group bgc-white-tp2 text-right w-auto'
+          }
+        },
+
+        buttons: [
+          {
+            "extend": "colvis",
+            "text": "<i class='far fa-eye text-125 text-dark-m2' data-toggle='tooltip' title='Show/hide columns'></i> <span class='d-none'>Show/hide columns</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary",
+            columns: ':not(:first)'
+          },
+          {
+            "extend": "copy",
+            "text": "<i class='far fa-copy text-125 text-purple' data-toggle='tooltip' title='Copy to clipboard'></i> <span class='d-none'>Copy to clipboard</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "csv",
+            "text": "<i class='fa fa-database text-125 text-success-m1' data-toggle='tooltip' title='CSV'></i> <span class='d-none'>Export to CSV</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "excel",
+            "text": "<i class='far fa-file-excel text-125 text-success-m1' data-toggle='tooltip' title='Excel'></i> <span class='d-none'>Export to Excel</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "print",
+            "text": "<i class='fa fa-print text-125 text-orange-d1' data-toggle='tooltip' title='Print'></i> <span class='d-none'>Print</span>",
+            "className": "btn-light-default btn-bgc-white  btn-h-outline-primary btn-a-outline-primary",
+            autoPrint: false,
+            message: 'This print was produced using the Print button for DataTables'
+          }	,
+          {
+            "extend": "pdf",
+            "text": "<i class='far fa-file-pdf text-125 text-danger-m1' data-toggle='tooltip' title='Export to PDF'></i> <span class='d-none'>Export to PDF</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+        ]
+      },      
+
+      columns: [
+        {
+          className: "td-toggle-details pos-rel",
+          data:null,
+          render: function (data, type, row, meta) {
+            return `<div class="position-lc h-95 ml-1px border-l-3 brc-info-m1">
+                        <!-- this decorative highlight border will be shown only when table is collapsed (responsive) -->
+                      </div>`;
+          }
+        },        
+        {data: 'id'},
+        {data: 'user__username'},
+        {data: 'title'},
+        {data: null,
+          render: function (data, type, row, meta) {            
+            desc = row.description
+            if(desc.length > 20) desc = desc.substring(0, 20) + '...';
+            if (row.file) {
+              var url_file = "{{ MEDIA_URL }}"+row.file
+              desc += `<br>
+                      <a href="`+url_file+`" target="_blank">
+                        <button class="btn btn-orange btn-sm" type="button">
+                          <i class="fa-solid fa-file-arrow-down mr-1"></i>
+                          Download File Attachment
+                        </button>
+                      </a>`
+            }
+            return desc
+          }
+        },
+        {data: 'category__name'},
+        {data: 'state__name'},
+        {
+          data: 'created_at',
+          render: function (data, type, row, meta) {
+            const date = new Date(data);
+            return date
+          }
+        },
+        {
+          data: 'id',
+          render: function (data, type, row, meta) {            
+            var url_edit = `/adminpage/tiket/edit/${data}`
+            var url_delete = `/adminpage/tiket/delete/${data}`
+            
+            return `
+                <div class="d-flex">  
+                  <span class="d-lg-inline mx-1">
+                    <a href="`+url_edit+`" data-action="edit">
+                      <button type="button" data-rel="tooltip" data-action="edit" title="Edit" class="btn btn-outline-warning shadow-sm btn-bgc-white">
+                          <i class="fas fa-pen-to-square text-100"></i>
+                      </button>
+                    </a>
+                  </span>
+
+                  <span class="d-lg-inline mx-1">
+                    <a href="`+url_delete+`" data-action="delete">
+                      <button type="button" data-rel="tooltip" data-action="delete" title="Delete" class="btn btn-outline-danger shadow-sm btn-bgc-white">
+                          <i class="fas fa-trash-can text-100"></i>
+                      </button>
+                    </a>
+                  </span>
+                </div>
+            `;
+          }
+        },
+      ],      
+
+      responsive: true,
+
+      /** optional scrolling **/
+      // scrollY: "300px",
+      // scrollCollapse: true,
+
+      colReorder: {
+        //disable column reordering for first and last columns
+        fixedColumnsLeft: 1,
+        fixedColumnsRight: 1
+      },
+      
+      // sDom: 'BRfrtlip',
+
+      classes: {
+        sLength: "dataTables_length text-left w-auto",
+      },
+
+    
+      // first and last column are not sortable
+      columnDefs: [
+        {
+          orderable: false,
+          className: null,
+          targets:   0
+        },
+        {
+          orderable: false,
+          className: null,
+          targets:   1
+        },
+        {
+          orderable: false,
+          className: null,
+          targets:   -1        
+        },
+        { 
+          responsivePriority: 1,
+          targets: 2
+        }
+      ],
+
+      
+      // multiple row selection
+      select: {
+        style: 'multis'
+      },
+
+      // no specific initial ordering
+      order: [],
+
+      language: {
+        search: '<i class="fa fa-search pos-abs mt-2 pt-3px ml-25 text-blue-m2"></i>',
+        searchPlaceholder: " Search..."
+      },
+
+      initComplete: function () {
+          // specify position of table buttons
+          $('.table-tools-col' ).append( $_table.buttons().container() )
+          // move searchbox into table header
+          .find('.dataTables_filter').find('input').addClass('pl-45 radius-round').removeClass('form-control-sm')
+
+          $('.filter_div').html(`
+              <div class="form-group row">
+                <div class="input-group col-sm-6 p-0" id="_tahun_">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text btn-lighter-grey btn-bgc-tp"><b>Tahun Ajuan</b></span>
+                  </div>
+
+                  <select id="select_tahun" name="tahun" class="select2bs4 form-control " data-placeholder="Pilih Tahun">
+                      <option selected disabled hidden>- Pilih Tahun -</option>
+                      {% for data in datatahun %}
+                        <option value='{{data}}' {% if tahun_terpilih == data %}SELECTED{% endif %}>{{ data }}</option>
+                      {% endfor %}
+                  </select>
+
+                </div>                
+
+              </div>
+          `);
+
+          $('#select_tahun').on('load change', function(){
+            tahun = $('#select_tahun').val();            
+            $_table.ajax.reload();
+          });
+
+          $('.select2bs4').select2({ theme: 'bootstrap4' })
+      }
+    
+
+
+    })
+
+    
+    // specify position of table buttons
+    $('.table-tools-col' )
+    .append( $_table.buttons().container() )
+    // move searchbox into table header
+    .find('.dataTables_filter').appendTo('.page-tools').find('input').addClass('pl-45 radius-round').removeClass('form-control-sm')
+    // and add a "+" button
+    .end()
+    .append(`
+      <a href="{% url 'adminpage:ticketing.user.ajuan.add' %}">
+        <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Add New">
+          <i class="fa fa-plus"></i>
+        </button>
+      </a>      
+    `)
+      
+  });
+</script>
+{% endblock %}
