@@ -43,6 +43,18 @@ def isloggedin(url):
     return decorator
 
 
+def show_ticket():
+    def decorator(function):
+        def wrapper(request, *args, **kwargs):                        
+            ticket = get_object_or_404(Ticket, id=kwargs.get('id'))            
+            if ticket.user == request.user or cek_group(request.user, ['bpsdm']):
+                return function(request, *args, **kwargs)                                
+            else:
+                raise PermissionDenied
+        return wrapper
+    return decorator
+
+
 def update_ticket():
     def decorator(function):
         def wrapper(request, *args, **kwargs):                        

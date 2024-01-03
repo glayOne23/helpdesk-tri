@@ -136,8 +136,8 @@
                 </li>
 
                 {% if request.user|has_group:'bpsdm' %}
-                  <li class="nav-item {{ request.path|setactive:'adminpage:setting.ticketing.state.table' }}">
-                    <a href="{% url 'adminpage:setting.ticketing.state.table' %}" class="nav-link">
+                  <li class="nav-item {{ request.path|setactive:'adminpage:ticketing.bpsdm.ajuan.table' }}">
+                    <a href="{% url 'adminpage:ticketing.bpsdm.ajuan.table' %}?state=pending" class="nav-link">
                       <span class="nav-text">
                         <span>Semua Ajuan</span>
                       </span>

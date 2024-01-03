@@ -5,11 +5,10 @@ from django.urls import reverse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 
-
-from apps.services.decorators import group_required, update_ticket
+from apps.services.decorators import group_required, update_ticket, show_ticket
 from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail
 from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm
 
@@ -331,9 +330,7 @@ def user_ajuan_table(request):
     context['duallistbox']      = False
     context['daterange']        = False
     context['countdown']        = False
-
-    # ===[Fetch Data]===
-    context['dataticket']     = Ticket.objects.filter(user=request.user).order_by('-id')
+    
     # tahun
     distinct_years = Ticket.objects.dates('created_at', 'year')
     years_list = [date.year for date in distinct_years]
@@ -395,10 +392,46 @@ def user_ajuan_json(request):
     queryset = Ticket.objects.filter(user=request.user)
     if request.POST and request.POST.get('tahun'):
         queryset = queryset.filter(created_at__year=request.POST.get('tahun'))
-        data = queryset.values('id', 'user', 'user__username', 'state', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
+        data = queryset.values('id', 'user', 'user__username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
         return JsonResponse(list(data), safe=False)
     else:
         return JsonResponse([], safe=False)
+    
+
+
+@login_required()
+@show_ticket()
+def user_ajuan_show(request, id):
+    context = {}
+    # ===[Load a CSS And JS File]===
+    context['datatables']       = False
+    context['tinydatepicker']   = False
+    context['datetimepicker']   = False
+    context['select2']          = False
+    context['chosen']           = False
+    context['dropzone']         = False
+    context['summernote']       = False
+    context['fullcalendar']     = False
+    context['photoswipe']       = False
+    context['maxlength']        = False
+    context['inputmask']        = False
+    context['moment']           = False
+    context['duallistbox']      = False
+    context['daterange']        = False
+    context['countdown']        = False
+
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)
+        context['dataticket'] = getticket
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Data Tidak Ditemukan!')
+        return redirect('adminpage:ticketing.user.ajuan.table')    
+    
+    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)
+
+    # ===[Render Template]===
+    return render(request, 'adminpage/ticketing/user/ajuan/show.html', context)    
 
 
 @login_required()
@@ -460,3 +493,57 @@ def user_ajuan_delete(request, id):
 
     # ===[Redirect]===
     return redirect('adminpage:ticketing.user.ajuan.table')
+
+
+
+# **********************************************************
+#                   BPSDM - AJUAN
+# **********************************************************
+@login_required()
+@group_required('admin', 'bpsdm')
+def bpsdm_ajuan_table(request):
+    context = {}
+    # ===[Load a CSS And JS File]===
+    context['datatables']       = True
+    context['tinydatepicker']   = False
+    context['datetimepicker']   = False
+    context['select2']          = True
+    context['chosen']           = False
+    context['dropzone']         = False
+    context['summernote']       = False
+    context['fullcalendar']     = False
+    context['photoswipe']       = False
+    context['maxlength']        = False
+    context['inputmask']        = False
+    context['moment']           = False
+    context['duallistbox']      = False
+    context['daterange']        = False
+    context['countdown']        = False
+
+    # ===[Fetch Data]===    
+    # status    
+    context['dataticketstate'] = TicketState.objects.annotate(total_tickets=Count('ticket'))    
+    context['state'] = request.GET.get('state')    
+    # tahun
+    distinct_years = Ticket.objects.dates('created_at', 'year')
+    years_list = [date.year for date in distinct_years]
+    context['datatahun'] = reversed(years_list)
+    context['tahun_terpilih'] = datetime.datetime.now().year    
+
+    # ===[Render Template]===
+    return render(request, 'adminpage/ticketing/admin/ajuan/table.html', context)
+
+
+@login_required()
+@group_required('admin', 'bpsdm')
+def bpsdm_ajuan_json(request):    
+    queryset = Ticket.objects.all()
+    if request.POST:
+        if request.POST.get('state'):
+            queryset = queryset.filter(state__code=request.POST.get('state'))
+        if request.POST.get('tahun'):
+            queryset = queryset.filter(created_at__year=request.POST.get('tahun'))
+        data = queryset.values('id', 'user', 'user__username', 'ticketstatedetail__user__username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
+        return JsonResponse(list(data), safe=False)
+    else:
+        return JsonResponse([], safe=False)

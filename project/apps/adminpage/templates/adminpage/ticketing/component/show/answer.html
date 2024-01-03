@@ -1,0 +1,59 @@
+<div class="col-12 mt-2">
+	<div class="card dcard overflow-hidden border-1 w-100 brc-blue-m1 radius-t-1 p-2">
+		<div class="card-header pl-0 pr-0">
+			<h5 class="card-title text-110 text-primary-d2 pt-1">
+				Jawaban Tiket {{dataticket.id}}
+			</h5>  
+		</div><!-- /.card-header -->
+		<div class="card-body bg-white">
+			<div class="row">
+
+				<div class="col-12">
+					
+					<!-- ============================= [] =============================  -->
+					<div class="text-grey-m1 text-95">
+						<div class="d-flex">
+							<div class="minh-100 pos-rel">
+								<!-- the vertical line connecting activity icons -->
+								<div class="position-tl ml-4 h-100 border-l-3 brc-secondary-l1"></div>
+								<!-- the icon with white border to cover the above line -->
+								<div class="pos-rel text-center pt-2 mx-2px w-6 h-6 border-4 brc-white radius-round bgc-blue-m1 text-white">
+									<i class="fa fa-thumb-tack" aria-hidden="true"></i>
+								</div>
+							</div>
+		
+							<div class="mx-2 flex-grow-1">
+								<div>
+									<span class="font-bolder btn-text-dark">
+										{{dataticket.user.username}}
+									</span>                    
+								</div>
+		
+								<div class="text-grey-d3 text-95 mt-15 pos-rel">
+									<ul>
+										<li>{{dataticket.title}}</li>
+										<li>{{dataticket.description}}</li>
+										{% if dataticket.file %}
+											<li>
+												<a href="{{dataticket.file}}" target="_blank" class="btn btn-sm btn-primary">
+													<i class="fa fa-download"></i>
+													File attachment
+												</a>												
+											</li>										
+										{% endif %}
+									</ul>
+								</div>
+		
+								<hr class="brc-secondary-l3" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+	
+
+		</div><!-- /.card-body -->          
+	</div>
+</div>

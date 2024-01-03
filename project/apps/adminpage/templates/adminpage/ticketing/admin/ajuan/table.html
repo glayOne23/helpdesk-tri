@@ -8,17 +8,42 @@
         {{ request.path|getUrlSegment:2 }}
         <small class="page-info text-secondary-d2 text-nowrap">
           <i class="fa fa-angle-double-right text-80"></i>
-          {{ request.path|getUrlSegment:3 }}
+          BPSM Tabel
         </small>
-      </h1>
+      </h1>      
 
       <div class="page-tools mt-3 mt-sm-0 mb-sm-n1">
         <!-- dataTables search box will be inserted here dynamically -->
       </div>
+
     </div>
 
+    <!-- ============================= [Tabs] =============================  -->
+    {% include 'adminpage/ticketing/component/table/tab.html' %}
+    
 
     <div class="card bcard h-auto">
+
+      {% comment %} {% if state == 'in_process' or state == 'closed' %}
+        <ul class="nav nav-justified nav-tabs nav-tabs-simple" role="tablist">        
+          <li class="nav-item mr-1px">
+            <a class="d-style btn btn-outline-light btn-a-text-dark btn-a-outline-lightgrey bgc-white radius-0 py-2 text-95 {% if state == data.code %}active{% endif %}" href="{% url 'adminpage:ticketing.bpsdm.ajuan.table' %}?state={{data.code}}&by=user">
+              <span class="v-active position-tl w-102 border-t-3 brc-primary mt-n3px ml-n1px"></span><!-- show this when active -->
+              <span class="v-n-active v-hover position-tl w-102 border-t-3 brc-primary-tp3 mt-n2px ml-n1px"></span><!-- show this when hovered & NOT active -->
+              Olehmu
+            </a>
+          </li>        
+          <li class="nav-item mr-1px">
+            <a class="d-style btn btn-outline-light btn-a-text-dark btn-a-outline-lightgrey bgc-white radius-0 py-2 text-95 {% if state == data.code %}active{% endif %}" href="{% url 'adminpage:ticketing.bpsdm.ajuan.table' %}?state={{data.code}}&by=other">
+              <span class="v-active position-tl w-102 border-t-3 brc-primary mt-n3px ml-n1px"></span><!-- show this when active -->
+              <span class="v-n-active v-hover position-tl w-102 border-t-3 brc-primary-tp3 mt-n2px ml-n1px"></span><!-- show this when hovered & NOT active -->
+              Oleh Lain
+            </a>
+          </li>        
+        </ul>
+      {% endif %} {% endcomment %}
+
+      
       <form method="post" autocomplete="off" class="border-t-3 brc-blue-m2">
 
         <table id="datatable" class="d-style w-100 table text-dark-m1 text-95 border-y-1 brc-black-tp11 collapsed dtr-table">
@@ -36,6 +61,10 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Pengaju
+              </th>              
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Pemroses
               </th>              
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
@@ -84,6 +113,7 @@
 
   $(document).ready(function(){
     let tahun = '{{ tahun_terpilih }}';
+    let state = '{{ state }}';    
 
 
     var tableId = '#datatable'
@@ -104,7 +134,7 @@
       renderer: 'bootstrap'
     })
 
-    let url = "{% url 'adminpage:ticketing.user.ajuan.json' %}"
+    let url = "{% url 'adminpage:ticketing.bpsdm.ajuan.json' %}"
     // url = url + `?tahun=${tahun}`
     
     var $_table = $(tableId).DataTable({
@@ -114,7 +144,8 @@
         dataSrc: '',        
         data: function (d) {
           d.csrfmiddlewaretoken = '{{ csrf_token }}',
-          d.tahun = tahun          
+          d.tahun = tahun,         
+          d.state = state
         }        
       },      
 
@@ -177,6 +208,7 @@
         },        
         {data: 'id'},
         {data: 'user__username'},
+        {data: 'ticketstatedetail__user__username'},
         {data: 'title'},
         {data: null,
           render: function (data, type, row, meta) {            
