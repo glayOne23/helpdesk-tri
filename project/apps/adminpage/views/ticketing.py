@@ -5,12 +5,11 @@ from django.urls import reverse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
-from django.db.models import Count, Sum
-
+from django.db.models import Count, Sum, OuterRef, Subquery, Max
 
 from apps.services.decorators import group_required, update_ticket, show_ticket
 from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail
-from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm
+from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm, TicketAnswerCreateForm
 
 from json import dumps
 
@@ -398,7 +397,6 @@ def user_ajuan_json(request):
         return JsonResponse([], safe=False)
     
 
-
 @login_required()
 @show_ticket()
 def user_ajuan_show(request, id):
@@ -428,7 +426,27 @@ def user_ajuan_show(request, id):
         messages.error(request, 'Data Tidak Ditemukan!')
         return redirect('adminpage:ticketing.user.ajuan.table')    
     
-    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)
+    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)    
+
+    # ===[Load Form]===
+    context['formticketanswer']     = TicketAnswerCreateForm(request.POST or None, request.FILES or None)
+
+    # ===[Edit Logic]===
+    if request.POST:
+        if context['formticketanswer'].is_valid():
+            ticketanswer = context['formticketanswer'].save(commit=False)
+            if len(TicketAnswer.objects.filter(ticket=getticket)) > 0:
+                ticketanswer.ticket_answer = TicketAnswer.objects.filter(ticket=getticket).order_by('id').first()
+            ticketanswer.ticket = getticket
+            ticketanswer.user = request.user
+            ticketanswer.save()
+
+            messages.success(request, 'Jawaban berhasil dikirim')
+            return redirect('adminpage:ticketing.user.ajuan.show', id=id)
+        else:
+            print("fdsafsda")
+            print(context['formticketanswer'].errors)
+            messages.error(request, context['formticketanswer'].errors)    
 
     # ===[Render Template]===
     return render(request, 'adminpage/ticketing/user/ajuan/show.html', context)    
@@ -495,6 +513,26 @@ def user_ajuan_delete(request, id):
     return redirect('adminpage:ticketing.user.ajuan.table')
 
 
+@login_required()
+@transaction.atomic
+def user_ajuan_change_status(request, id):
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)        
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Tiket Tidak Ditemukan!')
+        return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+        
+    getticket.ticket = getticket    
+    getticket.state = TicketState.get_finish()
+    getticket.save()            
+    # set ticket state detail ketika pertama kali buat ticket atau ketika state berubah
+    TicketStateDetail.objects.create(ticket=getticket, state=getticket.state, user=request.user)    
+
+    messages.success(request, 'Ticket sudah diselesaikan')
+    return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+
+
 
 # **********************************************************
 #                   BPSDM - AJUAN
@@ -543,7 +581,12 @@ def bpsdm_ajuan_json(request):
             queryset = queryset.filter(state__code=request.POST.get('state'))
         if request.POST.get('tahun'):
             queryset = queryset.filter(created_at__year=request.POST.get('tahun'))
-        data = queryset.values('id', 'user', 'user__username', 'ticketstatedetail__user__username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
+            queryset = queryset.annotate(
+                latest_ticketstatedetail_user_username=Subquery(
+                    TicketStateDetail.objects.filter(ticket=OuterRef('id')).order_by('-id').values('user__username')[:1]                    
+                    )
+                )              
+        data = queryset.values('id', 'user', 'user__username', 'latest_ticketstatedetail_user_username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
         return JsonResponse(list(data), safe=False)
     else:
         return JsonResponse([], safe=False)
@@ -579,7 +622,26 @@ def bpsdm_ajuan_show(request, id):
         url = reverse('adminpage:ticketing.bpsdm.ajuan.table') + '?state=pending'
         return redirect(url)
     
-    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)
+    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)    
+
+    # ===[Load Form]===
+    context['formticketanswer']     = TicketAnswerCreateForm(request.POST or None, request.FILES or None)    
+
+    # ===[Edit Logic]===
+    if request.POST:
+        if context['formticketanswer'].is_valid():
+            ticketanswer = context['formticketanswer'].save(commit=False)
+            if len(TicketAnswer.objects.filter(ticket=getticket)) > 0:
+                ticketanswer.ticket_answer = TicketAnswer.objects.filter(ticket=getticket).order_by('id').first()
+            ticketanswer.ticket = getticket
+            ticketanswer.user = request.user
+            ticketanswer.save()
+
+            messages.success(request, 'Jawaban berhasil dikirim')
+            return redirect('adminpage:ticketing.bpsdm.ajuan.show', id=id)
+        else:
+            messages.error(request, context['formticketanswer'].errors)
+
 
     # ===[Render Template]===
     return render(request, 'adminpage/ticketing/admin/ajuan/show.html', context)    
@@ -602,4 +664,44 @@ def bpsdm_edit_state(request, id):
     TicketStateDetail.objects.create(ticket=getticket, state=getticket.state, user=request.user)
     
     return redirect('adminpage:ticketing.bpsdm.ajuan.show', id=id)
+
+
+@login_required()
+def bpsdm_ajuan_change_status(request, id, status_code):
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)        
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Tiket Tidak Ditemukan!')
+        return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+        
+    getticket.ticket = getticket    
+    if status_code == 'in_process':
+        getticket.state = TicketState.get_in_process()
+        messages.success(request, 'Ticket sudah dibuka kembali')
+    if status_code == 'closed':
+        getticket.state = TicketState.get_closed()        
+        messages.success(request, 'Ticket sudah ditutup')
+    getticket.save()            
+    # set ticket state detail ketika pertama kali buat ticket atau ketika state berubah
+    TicketStateDetail.objects.create(ticket=getticket, state=getticket.state, user=request.user)    
     
+    return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+    
+
+# **********************************************************
+#                   TICKET ANSWER
+# **********************************************************
+@login_required()
+def ticketanswer_json(request, id):
+
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)    
+    except Ticket.DoesNotExist:
+        return JsonResponse({"data": []})
+        
+    queryset = TicketAnswer.objects.filter(ticket=getticket)    
+    data = queryset.values('id', 'user', 'user__username', 'description', 'file', 'created_at', 'updated_at')        
+    print(data)
+    return JsonResponse({"data":list(data)})

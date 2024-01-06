@@ -204,7 +204,7 @@
               <b class="sub-arrow"></b>
             </li>
 
-            <li class="nav-item {{ request.path|setactiveopen:'/adminpage/category' }}">
+            {% comment %} <li class="nav-item {{ request.path|setactiveopen:'/adminpage/category' }}">
               <a  class="nav-link dropdown-toggle collapsed">
                 <i class="nav-icon fas fa-tags nav-icon-round bgc-green-tp1"></i>
                 <span class="nav-text fadeable">
@@ -239,7 +239,7 @@
 
               <b class="sub-arrow"></b>
 
-            </li>
+            </li> {% endcomment %}
 
             <!-- setting ticket -->
             <li class="nav-item {{ request.path|setactiveopen:'/adminpage/setting/tiket/' }}">

@@ -33,10 +33,17 @@
         {% include 'adminpage/ticketing/component/show/process.html' %}
       {% endif %}
       {% if dataticket.state.code != 'pending' %}
-        {% include 'adminpage/ticketing/component/show/answer.html' %}        
+        {% include 'adminpage/ticketing/component/show/answer.html' %}
       {% endif %}
     </div>    
 
   </div>
+{% endblock %}
+
+
+{% block javascript %}
+
+{% include 'adminpage/ticketing/javascript/show/answer.html' %}
+
 {% endblock %}
 

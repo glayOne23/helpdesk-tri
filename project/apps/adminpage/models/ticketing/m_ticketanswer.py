@@ -9,7 +9,7 @@ class TicketAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     ticket_answer = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     description = models.TextField()
-    file = models.FileField(upload_to='ticketing/answers')
+    file = models.FileField(upload_to='ticketing/answers', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
 

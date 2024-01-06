@@ -50,7 +50,7 @@ path('setting/', include([
         path('kategori/<int:id>/edit',                    login_required(ticketing.category_edit),              name='setting.ticketing.category.edit'),
         path('kategori/deletelist',                       login_required(ticketing.category_deletelist),        name='setting.ticketing.category.deletelist'),
 
-        path('tahap/table',                             login_required(ticketing.state_table),             name='setting.ticketing.state.table'),
+        path('tahap/table',                            login_required(ticketing.state_table),             name='setting.ticketing.state.table'),
         path('tahap/add',                              login_required(ticketing.state_add),               name='setting.ticketing.state.add'),
         path('tahap/<int:id>/edit',                    login_required(ticketing.state_edit),              name='setting.ticketing.state.edit'),
         path('tahap/deletelist',                       login_required(ticketing.state_deletelist),        name='setting.ticketing.state.deletelist'),        
@@ -62,12 +62,15 @@ path('tiket/', include([
     path('user_ajuan_json',                   login_required(ticketing.user_ajuan_json),             name='ticketing.user.ajuan.json'),
     path('add',                               login_required(ticketing.user_ajuan_add),               name='ticketing.user.ajuan.add'),
     path('<int:id>/edit/',                    login_required(ticketing.user_ajuan_edit),              name='ticketing.user.ajuan.edit'),      
-    path('<int:id>/show/',                    login_required(ticketing.user_ajuan_show),              name='ticketing.user.ajuan.show'),      
+    path('<int:id>/show/',                    login_required(ticketing.user_ajuan_show),              name='ticketing.user.ajuan.show'),
     path('<int:id>/delete/',                  login_required(ticketing.user_ajuan_delete),        name='ticketing.user.ajuan.delete'),
+    path('<int:id>/change_status/',           login_required(ticketing.user_ajuan_change_status),        name='ticketing.user.ajuan.change_status'),
+    path('<int:id>/answer/',                  login_required(ticketing.ticketanswer_json),              name='ticketing.ticketanswer.json'),
 
     path('bpsdm/table',                        login_required(ticketing.bpsdm_ajuan_table),             name='ticketing.bpsdm.ajuan.table'),
     path('bpsdm/ajuan_json',                   login_required(ticketing.bpsdm_ajuan_json),             name='ticketing.bpsdm.ajuan.json'),
-    path('<int:id>/bpsdm/show/',                    login_required(ticketing.bpsdm_ajuan_show),              name='ticketing.bpsdm.ajuan.show'),      
+    path('<int:id>/bpsdm/show/',               login_required(ticketing.bpsdm_ajuan_show),              name='ticketing.bpsdm.ajuan.show'),      
+    path('<int:id>/bpsdm/change_status/<str:status_code>',      login_required(ticketing.bpsdm_ajuan_change_status),        name='ticketing.bpsdm.ajuan.change_status'),
     path('<int:id>/bpsdm/edit_state',          login_required(ticketing.bpsdm_edit_state),             name='ticketing.bpsdm.ajuan.edit_state'),
   ])),    
 ]

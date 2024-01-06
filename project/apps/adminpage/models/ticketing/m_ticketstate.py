@@ -19,3 +19,11 @@ class TicketState(models.Model):
     @staticmethod
     def get_in_process():
         return TicketState.objects.get(code='in_process')    
+    
+    @staticmethod
+    def get_finish():
+        return TicketState.objects.get(code='finish')        
+    
+    @staticmethod
+    def get_closed():
+        return TicketState.objects.get(code='closed')            

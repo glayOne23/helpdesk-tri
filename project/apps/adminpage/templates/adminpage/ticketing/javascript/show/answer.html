@@ -1,0 +1,126 @@
+{% load adminpage_tags %}
+
+
+<script>
+    function getTicketAnswer(ticket_id) {        
+        console.log("ticket answer called");    
+
+        let ticketanswers = ''        
+
+        $.ajax({
+            url: `/adminpage/tiket/${ticket_id}/answer/`,
+            type: 'GET',
+            dataType: 'json',            
+            success: function (data) {                                                
+                // Display the result or handle it as needed                                    
+                $.each(data.data, function (index, isi) {                                        
+                    file = ''
+                    if (isi.file) {
+                        file = `
+                        <li>
+                            <a href="{{ MEDIA_URL }}${isi.file}" target="_blank" class="btn btn-sm btn-primary">
+                                <i class="fa fa-download"></i>
+                                File attachment
+                            </a>												
+                        </li>										
+                        `
+                    }
+                   
+                    element_baru = `
+                        <!-- ============================= [] =============================  -->
+                        <div class="text-grey-m1 text-95">
+                            <div class="d-flex">
+                                <div class="minh-100 pos-rel">
+                                    <!-- the vertical line connecting activity icons -->
+                                    <div class="position-tl ml-4 h-100 border-l-3 brc-secondary-l1"></div>
+                                    <!-- the icon with white border to cover the above line -->
+                                    <div class="pos-rel text-center pt-2 mx-2px w-6 h-6 border-4 brc-white radius-round bgc-blue-m1 text-white">
+                                        <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+    
+                                <div class="mx-2 flex-grow-1">
+                                    <div>
+                                        <span class="font-bolder btn-text-dark">											
+                                            ${isi.user__username}
+                                        </span>                    
+                                    </div>
+    
+                                    <div class="text-grey-d3 text-95 mt-15 pos-rel">
+                                        <ul>										
+                                            <li>${isi.description}</li>
+                                            ${file}
+                                        </ul>
+                                    </div>
+    
+                                    <hr class="brc-secondary-l3" />
+                                </div>
+                            </div>
+                        </div>                   
+                    `
+                
+                    ticketanswers += element_baru
+
+                });   
+                
+                document.getElementById('div-dataticket').innerHTML = ticketanswers
+            },
+            error: function (error) {
+                console.error('Error fetching data:', error);
+            }
+        })    
+                
+    }
+
+    getTicketAnswer("{{dataticket.id}}")
+    
+    {% if dataticket.state.code == "in_process" %}
+        
+        var intervalId = setInterval(function() {
+            getTicketAnswer("{{dataticket.id}}");
+        }, 15*1000); // 1000 milliseconds = 1 second    
+
+
+        {% if request.user.username == dataticket.user.username %}								
+
+            function confirmFinishedTicket() {                
+                Swal.fire({
+                    title: "Apakah anda yakin?",
+                    text: "Tiket akan selesai dan anda tidak dapat mengirim jawaban pada tiket ini",                    
+                    showCancelButton: true,
+                    confirmButtonText: "Iya",                
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location.href = "{% url 'adminpage:ticketing.user.ajuan.change_status' dataticket.id %}";                        
+                    } 
+                });    
+            }
+
+        {% endif %}
+
+    {% endif %}
+
+
+    {% if dataticket.state.code == "finish" %}
+                
+        {% if request.user|has_group:'bpsdm' %}								
+
+            function confirmBPSDMTicket(state_code) {                
+                Swal.fire({
+                    title: "Apakah anda yakin?",                    
+                    showCancelButton: true,
+                    confirmButtonText: "Iya",                
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location.href = `/adminpage/tiket/{{dataticket.id}}/bpsdm/change_status/${state_code}`;
+                    } 
+                });    
+            }
+
+        {% endif %}
+
+    {% endif %}    
+    
+</script>

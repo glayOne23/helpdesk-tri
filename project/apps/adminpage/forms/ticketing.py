@@ -42,3 +42,13 @@ class TicketCreateForm(forms.ModelForm):
     #         instance.save(request=request)
 
     #     return instance    
+
+
+class TicketAnswerCreateForm(forms.ModelForm):
+  class Meta:
+    model   = TicketAnswer
+    fields  = ('description', 'file')
+    labels  = {
+      'description'    : _('Jawaban'),      
+      'file' : _('File attachment'),
+    }  

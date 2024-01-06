@@ -1,3 +1,6 @@
+{% load adminpage_tags %}
+{% load crispy_forms_tags %}
+
 <div class="col-12 mt-2">
 	<div class="card dcard overflow-hidden border-1 w-100 brc-blue-m1 radius-t-1 p-2">
 		<div class="card-header pl-0 pr-0">
@@ -35,7 +38,7 @@
 										<li>{{dataticket.description}}</li>
 										{% if dataticket.file %}
 											<li>
-												<a href="{{dataticket.file}}" target="_blank" class="btn btn-sm btn-primary">
+												<a href="{{dataticket.file.url}}" target="_blank" class="btn btn-sm btn-primary">
 													<i class="fa fa-download"></i>
 													File attachment
 												</a>												
@@ -49,7 +52,50 @@
 						</div>
 					</div>
 
+					<div id="div-dataticket"></div>
+					
 				</div>
+				
+				{% if request.user.username == dataticket.user.username or request.user|has_group:'bpsdm' %}
+					{% if dataticket.state.code == "in_process" %}								
+						<div class="col-12 mt-3">
+							
+							<div class="card dcard overflow-hidden border-1 w-100 brc-blue-m1 radius-t-1 p-2">
+								<div class="card-body bg-white">
+
+									<form action="" method="post" enctype="multipart/form-data">
+										{% csrf_token %}
+										{{formticketanswer|crispy}}								
+										<button type="submit" class="btn btn-success">Kirim <i class="fa fa-paper-plane"></i></button>
+									</form>
+
+								</div>	
+							</div>
+
+						</div>
+					{% endif %}
+				{% endif %}
+
+				{% if request.user.username == dataticket.user.username and dataticket.state.code == "in_process" %}								
+					<div class="container mt-2">
+						<div class="row">
+						<div class="col text-center">
+							<button class="btn btn-primary" onclick="confirmFinishedTicket()" ><i class="fa fa-check"></i> Selesaikan Tiket</button>
+						</div>
+						</div>
+					</div>
+				{% endif %}
+
+				{% if request.user|has_group:'bpsdm' and dataticket.state.code == "finish" %}								
+					<div class="container mt-2">
+						<div class="row">
+						<div class="col text-center">
+							<button class="btn btn-warning" onclick="confirmBPSDMTicket('in_process')" ><i class="fa fa-refresh"></i> Proses Tiket Lagi</button>
+							<button class="btn btn-primary" onclick="confirmBPSDMTicket('closed')" ><i class="fa fa-check"></i> Tutup Tiket</button>
+						</div>
+						</div>
+					</div>
+				{% endif %}				
 
 			</div>
 	
