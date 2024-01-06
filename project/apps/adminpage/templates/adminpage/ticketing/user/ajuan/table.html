@@ -207,9 +207,9 @@
         {
           data: 'id',
           render: function (data, type, row, meta) {            
-            var url_show = `/adminpage/tiket/show/${data}`
-            var url_edit = `/adminpage/tiket/edit/${data}`
-            var url_delete = `/adminpage/tiket/delete/${data}`
+            var url_show = `/adminpage/tiket/${data}/show/`
+            var url_edit = `/adminpage/tiket/${data}/edit/`
+            var url_delete = `/adminpage/tiket/${data}/delete/`
             
             return `
                 <div class="d-flex">

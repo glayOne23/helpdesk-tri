@@ -485,7 +485,7 @@ def user_ajuan_edit(request, id):
 @login_required()
 @update_ticket()
 def user_ajuan_delete(request, id):    
-    try:        
+    try:
         Ticket.objects.get(id=id).delete()
         messages.success(request, 'Data Berhasil Dihapus')
     except Ticket.DoesNotExist:
@@ -547,3 +547,59 @@ def bpsdm_ajuan_json(request):
         return JsonResponse(list(data), safe=False)
     else:
         return JsonResponse([], safe=False)
+    
+
+@login_required()
+@show_ticket()
+def bpsdm_ajuan_show(request, id):
+    context = {}
+    # ===[Load a CSS And JS File]===
+    context['datatables']       = False
+    context['tinydatepicker']   = False
+    context['datetimepicker']   = False
+    context['select2']          = False
+    context['chosen']           = False
+    context['dropzone']         = False
+    context['summernote']       = False
+    context['fullcalendar']     = False
+    context['photoswipe']       = False
+    context['maxlength']        = False
+    context['inputmask']        = False
+    context['moment']           = False
+    context['duallistbox']      = False
+    context['daterange']        = False
+    context['countdown']        = False
+
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)
+        context['dataticket'] = getticket
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Data Tidak Ditemukan!')
+        url = reverse('adminpage:ticketing.bpsdm.ajuan.table') + '?state=pending'
+        return redirect(url)
+    
+    context['dataticketstatedetail'] = TicketStateDetail.objects.filter(ticket=getticket)
+
+    # ===[Render Template]===
+    return render(request, 'adminpage/ticketing/admin/ajuan/show.html', context)    
+    
+
+@login_required()
+@group_required('admin', 'bpsdm')
+def bpsdm_edit_state(request, id):
+    # ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Data Tidak Ditemukan!')
+        url = reverse('adminpage:ticketing.bpsdm.ajuan.table') + '?state=pending'
+        return redirect(url)
+            
+    getticket.state = TicketState.get_in_process()
+    getticket.save()            
+    # set ticket state detail ketika pertama kali buat ticket atau ketika state berubah
+    TicketStateDetail.objects.create(ticket=getticket, state=getticket.state, user=request.user)
+    
+    return redirect('adminpage:ticketing.bpsdm.ajuan.show', id=id)
+    

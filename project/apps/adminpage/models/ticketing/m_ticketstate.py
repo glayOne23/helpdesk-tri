@@ -15,3 +15,7 @@ class TicketState(models.Model):
     @staticmethod
     def get_pending():
         return TicketState.objects.get(code='pending')
+    
+    @staticmethod
+    def get_in_process():
+        return TicketState.objects.get(code='in_process')    

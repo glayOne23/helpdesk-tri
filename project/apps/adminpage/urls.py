@@ -61,11 +61,13 @@ path('tiket/', include([
     path('table',                             login_required(ticketing.user_ajuan_table),             name='ticketing.user.ajuan.table'),
     path('user_ajuan_json',                   login_required(ticketing.user_ajuan_json),             name='ticketing.user.ajuan.json'),
     path('add',                               login_required(ticketing.user_ajuan_add),               name='ticketing.user.ajuan.add'),
-    path('edit/<int:id>',                     login_required(ticketing.user_ajuan_edit),              name='ticketing.user.ajuan.edit'),      
-    path('show/<int:id>',                     login_required(ticketing.user_ajuan_show),              name='ticketing.user.ajuan.show'),      
-    path('delete/<int:id>',                      login_required(ticketing.user_ajuan_delete),        name='ticketing.user.ajuan.delete'),
+    path('<int:id>/edit/',                    login_required(ticketing.user_ajuan_edit),              name='ticketing.user.ajuan.edit'),      
+    path('<int:id>/show/',                    login_required(ticketing.user_ajuan_show),              name='ticketing.user.ajuan.show'),      
+    path('<int:id>/delete/',                  login_required(ticketing.user_ajuan_delete),        name='ticketing.user.ajuan.delete'),
 
-    path('bpsdm_table',                             login_required(ticketing.bpsdm_ajuan_table),             name='ticketing.bpsdm.ajuan.table'),
-    path('bpsdm_ajuan_json',                   login_required(ticketing.bpsdm_ajuan_json),             name='ticketing.bpsdm.ajuan.json'),
+    path('bpsdm/table',                        login_required(ticketing.bpsdm_ajuan_table),             name='ticketing.bpsdm.ajuan.table'),
+    path('bpsdm/ajuan_json',                   login_required(ticketing.bpsdm_ajuan_json),             name='ticketing.bpsdm.ajuan.json'),
+    path('<int:id>/bpsdm/show/',                    login_required(ticketing.bpsdm_ajuan_show),              name='ticketing.bpsdm.ajuan.show'),      
+    path('<int:id>/bpsdm/edit_state',          login_required(ticketing.bpsdm_edit_state),             name='ticketing.bpsdm.ajuan.edit_state'),
   ])),    
 ]

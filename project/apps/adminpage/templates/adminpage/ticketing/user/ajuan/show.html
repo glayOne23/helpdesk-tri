@@ -29,11 +29,13 @@
 
     <div class="row">
       {% include 'adminpage/ticketing/component/show/basic.html' %}
-    </div>
-
-    <div class="row">
-      {% include 'adminpage/ticketing/component/show/answer.html' %}
-    </div>
+      {% if dataticket.state.code == 'pending' %}        
+        {% include 'adminpage/ticketing/component/show/process.html' %}
+      {% endif %}
+      {% if dataticket.state.code != 'pending' %}
+        {% include 'adminpage/ticketing/component/show/answer.html' %}        
+      {% endif %}
+    </div>    
 
   </div>
 {% endblock %}
