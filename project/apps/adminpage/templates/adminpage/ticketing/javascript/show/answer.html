@@ -78,7 +78,7 @@
         
         var intervalId = setInterval(function() {
             getTicketAnswer("{{dataticket.id}}");
-        }, 15*1000); // 1000 milliseconds = 1 second    
+        }, 10*1000); // 1000 milliseconds = 1 second    
 
 
         {% if request.user.username == dataticket.user.username %}								
