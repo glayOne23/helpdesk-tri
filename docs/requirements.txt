@@ -17,3 +17,6 @@ PyJWT==2.6.0
 python-decouple==3.8 # to read .env file files
 psycopg2==2.9.6 # production for postgresql database
 mysqlclient==2.1.1 # development for mysql database
+
+crispy-bootstrap4==2023.1
+django-crispy-forms==2.1
