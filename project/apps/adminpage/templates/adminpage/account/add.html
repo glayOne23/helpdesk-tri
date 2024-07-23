@@ -144,11 +144,6 @@
               </div>
 
 
-
-
-
-
-
               <div class="form-group row px-3">
                 <div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">
                   <label for="{{ formprofile.nip.id_for_label }}" class="mb-0">
@@ -219,10 +214,10 @@
                 
                 <div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
                   <div class="col-sm-8 col-md-7 shadow-none p-0">
-                    <select multiple="multiple" size="10" name="duallistbox_groups[]" id="duallist">
+                    <select multiple="multiple" size="10" name="duallistbox_groups[]" id="group">
                       {% if groups %}
                       {% for data in groups %}
-                      <option value="{{ data.id }}" {% if data.id in usergroups %}SELECTED{% endif %}>{{ data.groupdetails.alias }}</option>
+                        <option data-group="{{data.name}}" id="group-{{data.id}}" value="{{ data.id }}" {% if data.id in usergroups %}SELECTED{% endif %}>{{ data.groupdetails.alias }}</option>
                       {% endfor %}
                       {% endif %}
                     </select>
@@ -230,6 +225,28 @@
                   </div>
                 </div>
               </div>
+
+
+              <div class="form-group row px-3 d-none" id="div_adminticket">
+                <div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">
+                  <label for="" class="mb-0">
+                    Role Admin BPSDM
+                  </label>
+                </div>
+                
+                <div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
+                  <div class="col-sm-8 col-md-7 shadow-none p-0">
+                    <select multiple="multiple" size="10" name="duallistbox_admintickets[]" id="adminticket">
+                      {% if ticket_category %}
+                      {% for data in ticket_category %}
+                        <option value="{{ data.id }}" {% if data.id in useradmintickets %}SELECTED{% endif %}>{{ data.name }}</option>
+                      {% endfor %}
+                      {% endif %}
+                    </select>
+
+                  </div>
+                </div>
+              </div>              
               
 
 
@@ -291,4 +308,49 @@
     });
   });
 </script>
+
+
+<script>
+  // duallist box selain group, yang group ada di javascript laman
+  var demo1 = $('select[name="duallistbox_admintickets[]"]').bootstrapDualListbox({infoTextFiltered: '<span class="badge badge-purple badge-lg">Filtered</span>'});
+  var container1 = demo1.bootstrapDualListbox('getContainer');
+  container1.find('.btn').removeClass('btn-default').addClass('btn-xs btn-outline-info btn-h-outline-info btn-bold m-0')
+  .find('.glyphicon-arrow-right').attr('class', 'fa fa-arrow-right').end()
+  .find('.glyphicon-arrow-left').attr('class', 'fa fa-arrow-left')
+</script>
+
+
+<script>  
+  const select_id = 'group'
+  const group_name = 'bpsdm'
+
+  function showAdminBPSDM(select_id, group_name) {
+    //check is_bpsdm
+    let is_bpsdm = false
+    var selectedItems = $(`#${select_id}`).val();
+    selectedItems.forEach(angka => {      
+      if (document.getElementById(`group-${angka}`).dataset.group.toLowerCase() == group_name) {
+        is_bpsdm = true
+      }
+    });       
+    
+    // show admin
+    if (is_bpsdm) {
+      document.getElementById('div_adminticket').classList.remove('d-none')
+    }else{
+      document.getElementById('div_adminticket').classList.add('d-none')
+    }
+
+  }
+
+  // Add event listener for unselecting items
+  $(`#${select_id}`).on('change', function(e) { 
+    showAdminBPSDM(select_id, group_name)
+  });  
+
+  //initialize
+  showAdminBPSDM(select_id, group_name)
+  
+</script>
+
 {% endblock %}

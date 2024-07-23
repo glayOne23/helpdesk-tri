@@ -9,7 +9,7 @@ from django.db.models import Count, Sum, OuterRef, Subquery, Max
 
 from apps.services.decorators import group_required, update_ticket, show_ticket
 from apps.services.utils import add_custom_message
-from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail
+from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail, TicketAdmin
 from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm, TicketAnswerCreateForm
 
 from json import dumps
@@ -597,6 +597,9 @@ def bpsdm_ajuan_table(request):
 def bpsdm_ajuan_json(request):    
     queryset = Ticket.objects.all()
     if request.POST:
+        group_list = list(request.user.groups.all().values_list('name', flat=True))
+        if 'admin' not in group_list and 'bpsdm' in group_list:                    
+            queryset = queryset.filter(category__in=TicketAdmin.objects.filter(user=request.user).values_list('ticketcategory'))
         if request.POST.get('state'):
             queryset = queryset.filter(state__code=request.POST.get('state'))
         if request.POST.get('tahun'):

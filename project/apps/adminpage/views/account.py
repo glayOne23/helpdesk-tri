@@ -11,6 +11,8 @@ from apps.authentication.forms.auth import FormSignUp, FormUserEdit
 from apps.authentication.forms.groupdetails import FormGroupDetails
 from apps.authentication.forms.profile import FormProfile
 
+from apps.adminpage.models import TicketCategory, TicketAdmin
+
 from json import dumps
 
 
@@ -172,14 +174,23 @@ def add(request):
 
     # ===[Fetch Data]===
     context['groups']           = Group.objects.all()
+    context['ticket_category']  = TicketCategory.objects.all()
 
     if request.POST:
         if context['formsignup'].is_valid():
             if context['formprofile'].is_valid():
                 user = context['formsignup'].save()
+
                 usergroups = request.POST.getlist('duallistbox_groups[]')
                 user.groups.clear()
                 user.groups.set(usergroups)
+                user.save()
+
+                useradmintickets = request.POST.getlist('duallistbox_admintickets[]')
+                TicketAdmin.objects.filter(user=user).delete()
+                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)            
+                for category in useradmincategories:
+                    TicketAdmin.objects.create(user=user, ticketcategory=category)
                 user.save()
 
                 profile = context['formprofile'].save(commit=False)
@@ -228,6 +239,7 @@ def edit(request, id):
     try:
         user = User.objects.get(id=id)
         context['usergroups'] = user.groups.values_list('id',flat=True)
+        context['useradmintickets'] = user.ticketadmin_user.values_list('ticketcategory__id',flat=True)        
     except User.DoesNotExist:
         messages.error(request, 'Data Not Found!')
         return redirect('adminpage:account_table')
@@ -239,6 +251,7 @@ def edit(request, id):
 
     # ===[Fetch Data]===
     context['groups']           = Group.objects.all()
+    context['ticket_category']  = TicketCategory.objects.all()
 
 
     # ===[Editt Logic]===
@@ -273,6 +286,13 @@ def edit(request, id):
                 usergroups = request.POST.getlist('duallistbox_groups[]')
                 user.groups.clear()
                 user.groups.set(usergroups)
+
+                useradmintickets = request.POST.getlist('duallistbox_admintickets[]')
+                TicketAdmin.objects.filter(user=user).delete()
+                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)            
+                for category in useradmincategories:
+                    TicketAdmin.objects.create(user=user, ticketcategory=category)
+                user.save()                
 
 
                 messages.success(request, 'Data Updated Successfully', extra_tags=dumps({

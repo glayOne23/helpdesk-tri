@@ -47,6 +47,10 @@
               </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Role Admin BPSDM
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Email
               </th>
 
@@ -111,6 +115,20 @@
 
                 {% endif %}
               </td>
+
+              <td class="align-middle">
+                {% if data.ticketadmin_user %}
+
+                {% for ticketadmin in data.ticketadmin_user.all %}
+                <span class="m-1 badge bgc-white border-1 brc-blue-m2 btn-text-blue px-25">{{ticketadmin.ticketcategory.name|upper}}</span>
+                {% endfor %}
+
+                {% if not data.ticketadmin_user.all %}
+                <span class="text-125">-</span>
+                {% endif %}
+
+                {% endif %}
+              </td>              
 
               <td class="align-middle">
                 {{ data.email }}
