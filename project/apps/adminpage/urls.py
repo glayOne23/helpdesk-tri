@@ -66,6 +66,7 @@ path('tiket/', include([
     path('<int:id>/delete/',                  login_required(ticketing.user_ajuan_delete),        name='ticketing.user.ajuan.delete'),
     path('<int:id>/change_status/',           login_required(ticketing.user_ajuan_change_status),        name='ticketing.user.ajuan.change_status'),
     path('<int:id>/answer/',                  login_required(ticketing.ticketanswer_json),              name='ticketing.ticketanswer.json'),
+    path('<int:id>/rating/add',                  login_required(ticketing.user_ajuan_rating_add),       name='ticketing.user.ajuan.rating.add'),
 
     path('bpsdm/table',                        login_required(ticketing.bpsdm_ajuan_table),             name='ticketing.bpsdm.ajuan.table'),
     path('bpsdm/ajuan_json',                   login_required(ticketing.bpsdm_ajuan_json),             name='ticketing.bpsdm.ajuan.json'),

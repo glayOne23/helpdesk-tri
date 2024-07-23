@@ -58,6 +58,10 @@
                 Tanggal Ajuan
               </th>              
 
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Rating
+              </th>              
+
               <th class="border-0 bgc-white shadow-sm w-2">
                 Aksi
               </th>
@@ -73,9 +77,8 @@
       </form>
     </div>
 
-  </div>
-
-
+  </div>  
+  
 {% endblock %}
 
 
@@ -196,7 +199,7 @@
           }
         },
         {data: 'category__name'},
-        {data: 'state__name'},
+        {data: 'state__name'},        
         {
           data: 'created_at',
           render: function (data, type, row, meta) {
@@ -204,6 +207,7 @@
             return date
           }
         },
+        {data: 'rating'},
         {
           data: 'id',
           render: function (data, type, row, meta) {            
@@ -353,4 +357,75 @@
       
   });
 </script>
+
+
+{% if custom_messages.0.message %}
+  <!-- Rating -->
+  <script>
+  console.log("masuk");
+  jQuery(function($) {
+
+    // star rating plugin
+    $.fn.ratingThemes['fontawesome5-theme'] = {
+        filledStar: '<i class="fas fa-star text-orange-m2"></i>',
+        emptyStar: '<i class="far fa-star"></i>',
+        // clearButton: '<i class="fas fa-minus-circle text-110"></i>'
+    }
+
+    $('.star-rating').rating({
+      animate: false,
+      hoverOnClear: false,
+      size: 'md',
+      theme: 'fontawesome5-theme',
+      containerClass: 'is-star',
+
+      clearCaptionClass: 'badge badge-sm btn-light-secondary border-1 text-80',
+
+      starCaptionClasses: {
+        0.5: 'badge badge-sm btn-light-danger border-1 text-80',
+        1: 'badge badge-sm btn-light-danger border-1 text-80',
+        1.5: 'badge badge-sm btn-light-danger border-1 text-80',
+        2: 'badge badge-sm btn-light-warning border-1 text-80',
+        2.5: 'badge badge-sm btn-light-warning border-1 text-80',
+        3: 'badge badge-sm btn-light-warning border-1 text-80',
+        3.5: 'badge badge-sm btn-light-info border-1 text-80',
+        4: 'badge badge-sm btn-light-info border-1 text-80',
+        4.5: 'badge badge-sm btn-light-success border-1 text-80',
+        5: 'badge badge-sm badge-success text-80'
+      }
+    })
+
+  })
+
+
+    Swal.fire({
+      title: '{{custom_messages.0.message}}',
+      html: `
+        <form action="{{custom_messages.0.url}}" method="post" id="form-rating">
+          {% csrf_token %}
+          <input name="rating" class="star-rating" />
+        </form>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      preConfirm: () => {
+        const rating = document.querySelector('input[name="rating"]');
+        if (rating) {
+            return rating.value;
+        } else {
+            Swal.showValidationMessage('Please select a rating')
+        }
+      }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Swal.fire(`You rated us ${result.value} stars`);
+          form = document.getElementById('form-rating')
+          form.submit()
+        }    
+    })
+  </script>
+
+{% endif %}
+
+
 {% endblock %}

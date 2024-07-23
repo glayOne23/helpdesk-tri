@@ -120,3 +120,10 @@ def username_in_cas(username:str) -> bool:
                 return False
         else:
             return False
+        
+        
+def add_custom_message(request, message, url=None, tag='info'):
+    if 'custom_messages' not in request.session:
+        request.session['custom_messages'] = []
+    request.session['custom_messages'].append({'message': message, 'url':url, 'tag': tag})
+    request.session.modified = True

@@ -2,6 +2,8 @@
 # Created by Ridwan Renaldi, S.Kom. (rr867)
 # =========================================
 from django.conf import settings
+from django.contrib.messages import get_messages
+
 
 
 def global_settings(request):

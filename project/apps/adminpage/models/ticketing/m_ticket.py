@@ -11,6 +11,7 @@ class Ticket(models.Model):
     description = models.TextField()
     category = models.ForeignKey(TicketCategory, on_delete=models.SET_NULL, blank=True, null=True)
     file = models.FileField(upload_to='ticketing/attachments', blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
 

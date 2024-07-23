@@ -8,6 +8,7 @@ from django.http.response import JsonResponse
 from django.db.models import Count, Sum, OuterRef, Subquery, Max
 
 from apps.services.decorators import group_required, update_ticket, show_ticket
+from apps.services.utils import add_custom_message
 from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail
 from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm, TicketAnswerCreateForm
 
@@ -329,12 +330,16 @@ def user_ajuan_table(request):
     context['duallistbox']      = False
     context['daterange']        = False
     context['countdown']        = False
+    context['starrating']       = True
     
     # tahun
     distinct_years = Ticket.objects.dates('created_at', 'year')
     years_list = [date.year for date in distinct_years]
     context['datatahun'] = reversed(years_list)
-    context['tahun_terpilih'] = datetime.datetime.now().year    
+    context['tahun_terpilih'] = datetime.datetime.now().year        
+
+    # custom message failed
+    context['custom_messages'] = request.session.pop('custom_messages', [])    
 
     # ===[Render Template]===
     return render(request, 'adminpage/ticketing/user/ajuan/table.html', context)
@@ -390,8 +395,8 @@ def user_ajuan_add(request):
 def user_ajuan_json(request):    
     queryset = Ticket.objects.filter(user=request.user)
     if request.POST and request.POST.get('tahun'):
-        queryset = queryset.filter(created_at__year=request.POST.get('tahun'))
-        data = queryset.values('id', 'user', 'user__username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
+        queryset = queryset.filter(created_at__year=request.POST.get('tahun')).order_by('-id')
+        data = queryset.values('id', 'user', 'user__username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'rating', 'created_at', 'updated_at')
         return JsonResponse(list(data), safe=False)
     else:
         return JsonResponse([], safe=False)
@@ -440,11 +445,10 @@ def user_ajuan_show(request, id):
             ticketanswer.ticket = getticket
             ticketanswer.user = request.user
             ticketanswer.save()
-
+            
             messages.success(request, 'Jawaban berhasil dikirim')
             return redirect('adminpage:ticketing.user.ajuan.show', id=id)
-        else:
-            print("fdsafsda")
+        else:            
             print(context['formticketanswer'].errors)
             messages.error(request, context['formticketanswer'].errors)    
 
@@ -521,18 +525,34 @@ def user_ajuan_change_status(request, id):
         getticket = Ticket.objects.get(id=id)        
     except Ticket.DoesNotExist:
         messages.error(request, 'Tiket Tidak Ditemukan!')
-        return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+        return redirect('adminpage:ticketing.user.ajuan.show', id)
         
     getticket.ticket = getticket    
     getticket.state = TicketState.get_finish()
     getticket.save()            
     # set ticket state detail ketika pertama kali buat ticket atau ketika state berubah
     TicketStateDetail.objects.create(ticket=getticket, state=getticket.state, user=request.user)    
+    
+    add_custom_message(request, "Beri Rating Layanan", url=reverse('adminpage:ticketing.user.ajuan.rating.add', kwargs={"id": getticket.id}))    
 
-    messages.success(request, 'Ticket sudah diselesaikan')
-    return redirect('adminpage:ticketing.bpsdm.ajuan.show', id)
+    return redirect('adminpage:ticketing.user.ajuan.table')    
 
 
+
+def user_ajuan_rating_add(request, id):
+# ===[Check ID IsValid]===
+    try:
+        getticket = Ticket.objects.get(id=id)        
+    except Ticket.DoesNotExist:
+        messages.error(request, 'Tiket Tidak Ditemukan!')
+        return redirect('adminpage:ticketing.user.ajuan.show', id)    
+    
+    if request.POST:
+        getticket.rating = request.POST.get('rating')
+        getticket.save()
+        messages.success(request, 'Terima kasih sudah menilai')
+    
+    return redirect('adminpage:ticketing.user.ajuan.table')
 
 # **********************************************************
 #                   BPSDM - AJUAN
@@ -586,7 +606,7 @@ def bpsdm_ajuan_json(request):
                     TicketStateDetail.objects.filter(ticket=OuterRef('id')).order_by('-id').values('user__username')[:1]                    
                     )
                 )              
-        data = queryset.values('id', 'user', 'user__username', 'latest_ticketstatedetail_user_username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'created_at', 'updated_at')        
+        data = queryset.values('id', 'user', 'user__username', 'latest_ticketstatedetail_user_username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'rating', 'created_at', 'updated_at')        
         return JsonResponse(list(data), safe=False)
     else:
         return JsonResponse([], safe=False)

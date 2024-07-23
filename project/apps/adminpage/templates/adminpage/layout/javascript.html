@@ -216,6 +216,10 @@
     <script src="{% static 'template/dist/js/jquery.countdown.min.js' %}"></script>
     {% endif %}
 
+    {% if starrating %}
+    <script src="{% static 'template/node_modules/bootstrap-star-rating/js/star-rating.js' %}"></script>
+    {% endif %}    
+
     {% if messages %}
         <script>
             function notif(status, title, message, data=[]){

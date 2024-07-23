@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'hijack.middleware.HijackUserMiddleware',
 ]
 
+
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
@@ -81,7 +82,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                'apps.services.context_processors.global_settings',
+                'apps.services.context_processors.global_settings',                
             ],
         },
     },
