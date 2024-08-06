@@ -28,7 +28,7 @@
             <tr>
               <th class="td-toggle-details border-0 bgc-white shadow-sm">
                 <i class="fa fa-angle-double-down ml-2"></i>
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 ID Tiket
@@ -36,7 +36,7 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Pengaju
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Keluhan
@@ -48,19 +48,19 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Kategori
-              </th>     
-              
+              </th>
+
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Status
-              </th>   
-              
+              </th>
+
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Tanggal Ajuan
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Rating
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white shadow-sm w-2">
                 Aksi
@@ -69,7 +69,7 @@
           </thead>
 
           <tbody class="pos-rel">
-          
+
           </tbody>
 
         </table>
@@ -77,8 +77,8 @@
       </form>
     </div>
 
-  </div>  
-  
+  </div>
+
 {% endblock %}
 
 
@@ -100,7 +100,7 @@
 
 
     $.extend( true, $.fn.dataTable.defaults, {
-      dom:        
+      dom:
         "<'row'<'col-12 col-sm-2'l><'col-12 col-sm-7 filter_div'><'col-12 col-sm-3 text-right table-tools-col'f>>" +
         "<'row'<'col-12'tr>>" +
         "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
@@ -109,17 +109,17 @@
 
     let url = "{% url 'adminpage:ticketing.user.ajuan.json' %}"
     // url = url + `?tahun=${tahun}`
-    
+
     var $_table = $(tableId).DataTable({
       ajax: {
         url: url,
         type: 'POST',
-        dataSrc: '',        
+        dataSrc: '',
         data: function (d) {
           d.csrfmiddlewaretoken = '{{ csrf_token }}',
-          d.tahun = tahun          
-        }        
-      },      
+          d.tahun = tahun
+        }
+      },
 
       buttons: {
         dom: {
@@ -166,7 +166,7 @@
             "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
           },
         ]
-      },      
+      },
 
       columns: [
         {
@@ -177,12 +177,12 @@
                         <!-- this decorative highlight border will be shown only when table is collapsed (responsive) -->
                       </div>`;
           }
-        },        
+        },
         {data: 'id'},
         {data: 'user__username'},
         {data: 'title'},
         {data: null,
-          render: function (data, type, row, meta) {            
+          render: function (data, type, row, meta) {
             desc = row.description
             if(desc.length > 20) desc = desc.substring(0, 20) + '...';
             if (row.file) {
@@ -199,7 +199,7 @@
           }
         },
         {data: 'category__name'},
-        {data: 'state__name'},        
+        {data: 'state__name'},
         {
           data: 'created_at',
           render: function (data, type, row, meta) {
@@ -210,11 +210,11 @@
         {data: 'rating'},
         {
           data: 'id',
-          render: function (data, type, row, meta) {            
+          render: function (data, type, row, meta) {
             var url_show = `/adminpage/tiket/${data}/show/`
             var url_edit = `/adminpage/tiket/${data}/edit/`
             var url_delete = `/adminpage/tiket/${data}/delete/`
-            
+
             return `
                 <div class="d-flex">
                   <span class="d-lg-inline mx-1">
@@ -223,8 +223,8 @@
                           <i class="fas fa-eye text-100"></i>
                       </button>
                     </a>
-                  </span>                  
-                  
+                  </span>
+
                   <span class="d-lg-inline mx-1">
                     <a href="`+url_edit+`" data-action="edit">
                       <button type="button" data-rel="tooltip" data-action="edit" title="Edit" class="btn btn-outline-warning shadow-sm btn-bgc-white ${row.state__code != 'pending' ? 'disabled': ''}">
@@ -244,7 +244,7 @@
             `;
           }
         },
-      ],      
+      ],
 
       responsive: true,
 
@@ -257,14 +257,14 @@
         fixedColumnsLeft: 1,
         fixedColumnsRight: 1
       },
-      
+
       // sDom: 'BRfrtlip',
 
       classes: {
         sLength: "dataTables_length text-left w-auto",
       },
 
-    
+
       // first and last column are not sortable
       columnDefs: [
         {
@@ -280,15 +280,15 @@
         {
           orderable: false,
           className: null,
-          targets:   -1        
+          targets:   -1
         },
-        { 
+        {
           responsivePriority: 1,
           targets: 2
         }
       ],
 
-      
+
       // multiple row selection
       select: {
         style: 'multis'
@@ -322,24 +322,24 @@
                       {% endfor %}
                   </select>
 
-                </div>                
+                </div>
 
               </div>
           `);
 
           $('#select_tahun').on('load change', function(){
-            tahun = $('#select_tahun').val();            
+            tahun = $('#select_tahun').val();
             $_table.ajax.reload();
           });
 
           $('.select2bs4').select2({ theme: 'bootstrap4' })
       }
-    
+
 
 
     })
 
-    
+
     // specify position of table buttons
     $('.table-tools-col' )
     .append( $_table.buttons().container() )
@@ -352,9 +352,9 @@
         <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Add New">
           <i class="fa fa-plus"></i>
         </button>
-      </a>      
+      </a>
     `)
-      
+
   });
 </script>
 
@@ -421,7 +421,7 @@
           // Swal.fire(`You rated us ${result.value} stars`);
           form = document.getElementById('form-rating')
           form.submit()
-        }    
+        }
     })
   </script>
 

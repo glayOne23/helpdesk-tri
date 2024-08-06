@@ -10,7 +10,7 @@
           <i class="fa fa-angle-double-right text-80"></i>
           BPSM Tabel
         </small>
-      </h1>      
+      </h1>
 
       <div class="page-tools mt-3 mt-sm-0 mb-sm-n1">
         <!-- dataTables search box will be inserted here dynamically -->
@@ -20,30 +20,30 @@
 
     <!-- ============================= [Tabs] =============================  -->
     {% include 'adminpage/ticketing/component/table/tab.html' %}
-    
+
 
     <div class="card bcard h-auto">
 
       {% comment %} {% if state == 'in_process' or state == 'closed' %}
-        <ul class="nav nav-justified nav-tabs nav-tabs-simple" role="tablist">        
+        <ul class="nav nav-justified nav-tabs nav-tabs-simple" role="tablist">
           <li class="nav-item mr-1px">
             <a class="d-style btn btn-outline-light btn-a-text-dark btn-a-outline-lightgrey bgc-white radius-0 py-2 text-95 {% if state == data.code %}active{% endif %}" href="{% url 'adminpage:ticketing.bpsdm.ajuan.table' %}?state={{data.code}}&by=user">
               <span class="v-active position-tl w-102 border-t-3 brc-primary mt-n3px ml-n1px"></span><!-- show this when active -->
               <span class="v-n-active v-hover position-tl w-102 border-t-3 brc-primary-tp3 mt-n2px ml-n1px"></span><!-- show this when hovered & NOT active -->
               Olehmu
             </a>
-          </li>        
+          </li>
           <li class="nav-item mr-1px">
             <a class="d-style btn btn-outline-light btn-a-text-dark btn-a-outline-lightgrey bgc-white radius-0 py-2 text-95 {% if state == data.code %}active{% endif %}" href="{% url 'adminpage:ticketing.bpsdm.ajuan.table' %}?state={{data.code}}&by=other">
               <span class="v-active position-tl w-102 border-t-3 brc-primary mt-n3px ml-n1px"></span><!-- show this when active -->
               <span class="v-n-active v-hover position-tl w-102 border-t-3 brc-primary-tp3 mt-n2px ml-n1px"></span><!-- show this when hovered & NOT active -->
               Oleh Lain
             </a>
-          </li>        
+          </li>
         </ul>
       {% endif %} {% endcomment %}
 
-      
+
       <form method="post" autocomplete="off" class="border-t-3 brc-blue-m2">
 
         <table id="datatable" class="d-style w-100 table text-dark-m1 text-95 border-y-1 brc-black-tp11 collapsed dtr-table">
@@ -53,7 +53,7 @@
             <tr>
               <th class="td-toggle-details border-0 bgc-white shadow-sm">
                 <i class="fa fa-angle-double-down ml-2"></i>
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 ID Tiket
@@ -61,11 +61,11 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Pengaju
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Pemroses
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Keluhan
@@ -77,15 +77,15 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Kategori
-              </th>     
-              
+              </th>
+
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Status
-              </th>   
-              
+              </th>
+
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Tanggal Ajuan
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white shadow-sm w-2">
                 Aksi
@@ -94,7 +94,7 @@
           </thead>
 
           <tbody class="pos-rel">
-          
+
           </tbody>
 
         </table>
@@ -113,7 +113,7 @@
 
   $(document).ready(function(){
     let tahun = '{{ tahun_terpilih }}';
-    let state = '{{ state }}';    
+    let state = '{{ state }}';
 
 
     var tableId = '#datatable'
@@ -127,7 +127,7 @@
 
 
     $.extend( true, $.fn.dataTable.defaults, {
-      dom:        
+      dom:
         "<'row'<'col-12 col-sm-2'l><'col-12 col-sm-7 filter_div'><'col-12 col-sm-3 text-right table-tools-col'f>>" +
         "<'row'<'col-12'tr>>" +
         "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
@@ -136,18 +136,18 @@
 
     let url = "{% url 'adminpage:ticketing.bpsdm.ajuan.json' %}"
     // url = url + `?tahun=${tahun}`
-    
+
     var $_table = $(tableId).DataTable({
       ajax: {
         url: url,
         type: 'POST',
-        dataSrc: '',        
+        dataSrc: '',
         data: function (d) {
           d.csrfmiddlewaretoken = '{{ csrf_token }}',
-          d.tahun = tahun,         
+          d.tahun = tahun,
           d.state = state
-        }        
-      },      
+        }
+      },
 
       buttons: {
         dom: {
@@ -194,7 +194,7 @@
             "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
           },
         ]
-      },      
+      },
 
       columns: [
         {
@@ -205,13 +205,13 @@
                         <!-- this decorative highlight border will be shown only when table is collapsed (responsive) -->
                       </div>`;
           }
-        },        
+        },
         {data: 'id'},
         {data: 'user__username'},
         {data: 'latest_ticketstatedetail_user_username'},
         {data: 'title'},
         {data: null,
-          render: function (data, type, row, meta) {            
+          render: function (data, type, row, meta) {
             desc = row.description
             if(desc.length > 20) desc = desc.substring(0, 20) + '...';
             if (row.file) {
@@ -238,9 +238,9 @@
         },
         {
           data: 'id',
-          render: function (data, type, row, meta) {            
-            var url_show = `/adminpage/tiket/${data}/bpsdm/show/`            
-            
+          render: function (data, type, row, meta) {
+            var url_show = `/adminpage/tiket/${data}/bpsdm/show/`
+
             return `
                 <div class="d-flex">
                   <span class="d-lg-inline mx-1">
@@ -249,12 +249,12 @@
                           <i class="fas fa-eye text-100"></i>
                       </button>
                     </a>
-                  </span>                                                      
+                  </span>
                 </div>
             `;
           }
         },
-      ],      
+      ],
 
       responsive: true,
 
@@ -267,14 +267,14 @@
         fixedColumnsLeft: 1,
         fixedColumnsRight: 1
       },
-      
+
       // sDom: 'BRfrtlip',
 
       classes: {
         sLength: "dataTables_length text-left w-auto",
       },
 
-    
+
       // first and last column are not sortable
       columnDefs: [
         {
@@ -290,15 +290,15 @@
         {
           orderable: false,
           className: null,
-          targets:   -1        
+          targets:   -1
         },
-        { 
+        {
           responsivePriority: 1,
           targets: 2
         }
       ],
 
-      
+
       // multiple row selection
       select: {
         style: 'multis'
@@ -332,24 +332,24 @@
                       {% endfor %}
                   </select>
 
-                </div>                
+                </div>
 
               </div>
           `);
 
           $('#select_tahun').on('load change', function(){
-            tahun = $('#select_tahun').val();            
+            tahun = $('#select_tahun').val();
             $_table.ajax.reload();
           });
 
           $('.select2bs4').select2({ theme: 'bootstrap4' })
       }
-    
+
 
 
     })
 
-    
+
     // specify position of table buttons
     $('.table-tools-col' )
     .append( $_table.buttons().container() )
@@ -362,9 +362,9 @@
         <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Add New">
           <i class="fa fa-plus"></i>
         </button>
-      </a>      
+      </a>
     `)
-      
+
   });
 </script>
 {% endblock %}

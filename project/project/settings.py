@@ -82,7 +82,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                'apps.services.context_processors.global_settings',                
+                'apps.services.context_processors.global_settings',
             ],
         },
     },
@@ -176,7 +176,7 @@ APP_VERSION             = 'v1.0'
 APP_YEAR                = '2023'
 APP_DEVELOPER           = 'BTI'
 APP_COMPANY_SHORT_NAME  = 'UMS'
-APP_COMPANY_FULL_NAME   = 'Universitas Muhammadiyah Surakarta'
+APP_COMPANY_FULL_NAME   = 'BPSDM UMS'
 APP_LOGO                = os.path.join(STATIC_URL,'images/logo/ums_logo_color.svg')
 APP_FAVICON             = os.path.join(STATIC_URL,'images/logo/ums_logo_favicon.ico')
 APP_BASE_URL            = config('APP_BASE_URL', default='') # for email verify
@@ -224,12 +224,12 @@ API_STAR_PASSWORD       = config('API_STAR_PASSWORD',   default='YOUR_APISTAR_PA
 
 # ========[EMAIL]========
 EMAIL_VERIFICATION      = False # If set to true, the user needs to verify email during registration (Fill in the data below if set to true)
-EMAIL_BACKEND           = 'django.core.mail.backends.smtp.EmailBackend' 
+EMAIL_BACKEND           = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST_USER         = config('EMAIL_HOST_USER',     default='YOUR_EMAIL@GOOGLE.COM')
 EMAIL_HOST_PASSWORD     = config('EMAIL_HOST_PASSWORD', default='YOUR_PASSWORD')
 EMAIL_HOST              = 'smtp.gmail.com'
-EMAIL_PORT              = 587 
-EMAIL_USE_TLS           = True 
+EMAIL_PORT              = 587
+EMAIL_USE_TLS           = True
 
 
 # ========[WABLAS]=======
