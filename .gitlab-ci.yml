@@ -1,13 +1,9 @@
-# RENAME THIS FILE INTO .gitlab-ci.yml
-# CHANGE VALUE ACCORDING TO NEED
-
 variables:
-  URL: 'WRITE REPOSITORY URL HERE'
-
+  URL: 'gitlab.ums.ac.id:5050//mhi595/helpdesk-bpsdm:v1.0'
 
 stages:
   - build
-  - update
+  # - update
 
 
 before_script:
@@ -19,23 +15,10 @@ after_script:
   - echo "COMPLETE STAGE..."
 
 
-Update Image:
+Build Image:
   stage: build
   script:
     - docker build -t $URL .
-  only:
-    changes:
-      - docs/requirements.txt
-
-Update App:
-  stage: update
-  script:    
-    - docker pull $URL
-    - docker create --name temp_container $URL
-    - docker cp project/. temp_container:/home/app/webapp/
-    - docker cp docs/requirements.txt temp_container:/home/app/webapp/
-    - docker commit temp_container $URL
-    - docker container rm temp_container
   only:
     refs:
       - main
