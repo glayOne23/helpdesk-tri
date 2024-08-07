@@ -1,5 +1,5 @@
 variables:
-  URL: 'gitlab.ums.ac.id:5050//mhi595/helpdesk-bpsdm:v1.0'
+  URL: 'gitlab.ums.ac.id:5050/mhi595/helpdesk-bpsdm:v1.0'
 
 stages:
   - build
