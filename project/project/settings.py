@@ -193,6 +193,12 @@ LOGIN_URL               = 'authentication:signin'
 LOGIN_REDIRECT_URL      = 'authentication:signin'
 
 
+# ========[CSRF]=======
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ums.ac.id",
+]
+
+
 # ======[Django Cas]=====
 CAS_SERVER_URL          = 'https://auth.ums.ac.id/cas/'
 CAS_ADMIN_PREFIX        = 'admin' # Set to -> '/admin' if you want to login to the admin using cas
