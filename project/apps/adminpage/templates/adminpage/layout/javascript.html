@@ -65,8 +65,8 @@
                 const form = document.createElement('form');
                 form.method = 'post';
                 form.action = url;
-                
-                const params = { 
+
+                const params = {
                   'csrfmiddlewaretoken': '{{ csrf_token }}',
                   'list_id': list_id,
                 }
@@ -109,7 +109,7 @@
     {% if inputmask %}
     <script src="{% static 'template/node_modules/inputmask/dist/jquery.inputmask.js' %}"></script>
     {% endif %}
-    
+
     {% if tinydatepicker %}
     <script src="{% static 'template/node_modules/tiny-date-picker/dist/date-range-picker.js' %}"></script>
     {% endif %}
@@ -117,11 +117,11 @@
     {% if moment %}
     <script src="{% static 'template/node_modules/moment/moment.js' %}"></script>
     {% endif %}
-    
+
     {% if datetimepicker %}
     <script src="{% static 'template/node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js' %}"></script>
     {% endif %}
-    
+
     {% if select2 %}
     <script src="{% static 'template/node_modules/select2/dist/js/select2.js' %}"></script>
     <script>
@@ -132,11 +132,11 @@
     {% if chosen %}
     <script src="{% static 'template/node_modules/chosen-js/chosen.jquery.js' %}"></script>
     {% endif %}
-    
+
     {% if dropzone %}
     <script src="{% static 'template/node_modules/dropzone/dist/dropzone.js' %}"></script>
     {% endif %}
-    
+
     {% if summernote %}
     <script src="{% static 'template/node_modules/summernote/dist/summernote-lite.js' %}"></script>
     <script>
@@ -187,7 +187,7 @@
     <script src="{% static 'template/node_modules/bootbox/bootbox.all.js' %}"></script>
     <script src="{% static 'template/node_modules/fullcalendar/main.js' %}"></script>
     {% endif %}
-    
+
     {% if photoswipe %}
     <script src="{% static 'template/node_modules/photoswipe/dist/photoswipe.js' %}"></script>
     <script src="{% static 'template/node_modules/photoswipe/dist/photoswipe-ui-default.js' %}"></script>
@@ -218,7 +218,12 @@
 
     {% if starrating %}
     <script src="{% static 'template/node_modules/bootstrap-star-rating/js/star-rating.js' %}"></script>
-    {% endif %}    
+    {% endif %}
+
+    {% if chart %}
+    <script src="{% static 'template/node_modules/chart.js/dist/Chart.js' %}"></script>
+    {% endif %}
+
 
     {% if messages %}
         <script>
@@ -231,15 +236,15 @@
                   if (data['redirect']){
                     redirect = data['redirect']
                   }
-  
+
                   if (data['confbtntxt']){
                     confbtntxt = data['confbtntxt']
                   }
-  
+
                   if (data['cnclbtntxt']){
                     cnclbtntxt = data['cnclbtntxt']
                   }
-  
+
                   if (data['title']){
                     title = data['title']
                   }
@@ -278,11 +283,11 @@
     {% endif %}
 
     <script>
-      function setprofilesync(uniid){   
+      function setprofilesync(uniid){
         const form = document.createElement('form');
         form.method = 'post';
         form.action = "{% url 'adminpage:setprofilesync' %}";
-        
+
         const hiddenField = document.createElement('input');
         hiddenField.type = 'hidden';
         hiddenField.name = 'csrfmiddlewaretoken';
@@ -296,11 +301,11 @@
         // $.ajax({
         //   type: 'POST',
         //   url: "{% url 'adminpage:setprofilesync' %}",
-        //   data: { 
-        //     csrfmiddlewaretoken:'{{ csrf_token }}',            
+        //   data: {
+        //     csrfmiddlewaretoken:'{{ csrf_token }}',
         //   },
         //   dataType: 'JSON',
-        //   success: function (data) {           
+        //   success: function (data) {
         //     Swal.fire({
         //         icon: data.status,
         //         title: data.status,

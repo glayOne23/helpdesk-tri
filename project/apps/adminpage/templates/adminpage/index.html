@@ -26,9 +26,9 @@
           <h3 class="text-warning-d1 text-130">Warning!</h3>
           You do not have access to this system.
         </div>
-        
+
       </div>
-    
+
     {% endif %}
 
     <!-- stat boxes -->
@@ -38,14 +38,14 @@
         <div class="bcard d-flex flex-column text-center px-2 py-3 h-100 shadow mb-3">
           <div class="mb-1">
             <span class="d-inline-block p-3 radius-round">
-                <!-- <i class="fab fa-twitter text-success-m1 text-180 w-4"></i> -->                
+                <!-- <i class="fab fa-twitter text-success-m1 text-180 w-4"></i> -->
                 <img src="{{ APP_LOGO }}" alt="" width="150px">
             </span>
           </div>
 
           <div class="mt-1">
-            <div class="text-nowrap text-170 text-dark">Selamat Datang di {{ APP_SHORT_NAME }}</div>      
-            <div class="text-nowrap text-120 text-grey">{{ APP_FULL_NAME }}</div>                        
+            <div class="text-nowrap text-170 text-dark">Selamat Datang di {{ APP_SHORT_NAME }}</div>
+            <div class="text-nowrap text-120 text-grey">{{ APP_FULL_NAME }}</div>
             {% comment %} <a href="" class="btn btn-primary radius-round mt-2">Ajukan Tiket</a> {% endcomment %}
           </div>
 
@@ -55,7 +55,7 @@
     </div>
 
 
-    {% comment %} <div class="px-2 mt-3">
+    <div class="px-2 mt-3">
       <div class="row">
 
         <div class="col-12 col-sm-6 col-lg-4 px-2 mb-2 mb-lg-0">
@@ -64,7 +64,7 @@
 
             <div>
               <span class="d-inline-block bgc-primary-d1 p-3 radius-round text-center border-4 brc-primary-l2">
-                <i class="fa fa-shopping-cart text-white text-170 w-4 h-4"></i>
+                <i class="fa fa-file-text text-white text-170 w-4 h-4"></i>
               </span>
             </div>
 
@@ -72,26 +72,95 @@
 
               <div class="pos-rel">
                 <span class="text-dark-tp3 text-180">
-                  369
+                  {{totalticket}}
                 </span>
 
                 <!-- <span class="text-danger-m2 text-600 text-90 ml-15 text-nowrap">
-                  2%                  
+                  2%
                 </span> -->
               </div>
 
               <div class="text-dark-tp4 text-110">
-                new orders
+                Tiket
               </div>
 
             </div>
 
           </div><!-- /.bcard -->
-              
+
+        </div>
       </div>
-    </div> {% endcomment %}
+    </div>
+
+
+    <!-- chart -->
+    <div class="row px-2 mt-3">
+      <div class="col-12 col-sm-12 col-md-12 px-2 mb-1 mb-md-0">
+
+        <div class="bcard d-flex flex-column text-center px-2 py-3 h-100 shadow mb-3">
+
+
+          <div class="d-flex align-items-start justify-content-center flex-wrap">
+            <canvas id="ticket-chart" class="pos-rel mb-3"></canvas>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
 
 
   </div>
 {% endblock %}
 
+
+
+
+{% block javascript %}
+
+
+<script>
+  var stateTicketData = JSON.parse("{{ stateticket| escapejs }}");
+
+  let yValues = []
+  let xValues = []
+  stateTicketData.forEach(data => {
+    yValues.push(data.ticket_count)
+    xValues.push(data.name)
+  });
+
+  var barColors = [
+        "#4174C9",
+        "#7031AC",
+        "#C94D6D",
+        "#E4BF58",
+        "#3C9D4E",
+    ];
+
+</script>
+
+<script>
+
+new Chart("ticket-chart", {
+    type: "pie",
+    data: {
+        labels: xValues,
+        datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+        }]
+    },
+    options: {
+        title: {
+        display: true,
+        text: "Bagan Status Tiket"
+        }
+    }
+    });
+
+</script>
+
+
+
+{% endblock javascript %}
