@@ -15,7 +15,7 @@
 
     </div>
 
-    {% if not request.user.groups.exists and not request.user.is_superuser %}
+    <!-- {% if not request.user.groups.exists and not request.user.is_superuser %}
       <div class="alert alert-collapse bgc-white text-dark-tp3 border-1 brc-secondary-l2 shadow-sm radius-0 py-3 d-flex align-items-start mt-3">
         <div class="position-tl w-102 m-n1px border-t-4 brc-warning"></div>
         <div class="bgc-warning px-4 py-25 radius-1px mr-4 shadow-sm">
@@ -29,7 +29,7 @@
 
       </div>
 
-    {% endif %}
+    {% endif %} -->
 
     <!-- stat boxes -->
     <div class="row px-2">
@@ -94,21 +94,23 @@
 
 
     <!-- chart -->
-    <div class="row px-2 mt-3">
-      <div class="col-12 col-sm-12 col-md-12 px-2 mb-1 mb-md-0">
+    {% if request.user.groups.exists or request.user.is_superuser %}
+      <div class="row px-2 mt-3">
+        <div class="col-12 col-sm-12 col-md-12 px-2 mb-1 mb-md-0">
 
-        <div class="bcard d-flex flex-column text-center px-2 py-3 h-100 shadow mb-3">
+          <div class="bcard d-flex flex-column text-center px-2 py-3 h-100 shadow mb-3">
 
 
-          <div class="d-flex align-items-start justify-content-center flex-wrap">
-            <canvas id="ticket-chart" class="pos-rel mb-3"></canvas>
+            <div class="d-flex align-items-start justify-content-center flex-wrap">
+              <canvas id="ticket-chart" class="pos-rel mb-3"></canvas>
+            </div>
+
+
+
           </div>
-
-
-
         </div>
       </div>
-    </div>
+    {% endif %}
 
 
   </div>
