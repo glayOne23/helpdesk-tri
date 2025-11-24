@@ -6,7 +6,7 @@
 		<div class="card-header pl-0 pr-0">
 			<h5 class="card-title text-110 text-primary-d2 pt-1">
 				Proses Ajuan
-			</h5>  
+			</h5>
 		</div><!-- /.card-header -->
 		<div class="card-body bg-white">
 			{% if request.user|has_group:'bpsdm' %}
@@ -14,16 +14,16 @@
 					{% csrf_token %}
 					<div class="row d-flex justify-content-center">
 						<input type="hidden" name="in_process">
-						<div class="col text-center">              
+						<div class="col text-center">
 							<button class="btn btn-success btn-bold px-4" type="submit"><i class="fas fa-check mr-1"></i>Proses Ajuan</button>
-						</div>						
-					</div>					
-				</form>			
-			{% else %}				
+						</div>
+					</div>
+				</form>
+			{% else %}
 				<i class="fas fa-lock text-100 text-warning"></i>
-				BPSDM harus mengubah ajuan menjadi In process terlebih dahulu untuk menuju langkah selanjutnya 				
+				DSDMO harus mengubah ajuan menjadi In process terlebih dahulu untuk menuju langkah selanjutnya
 			{% endif %}
 
-		</div><!-- /.card-body -->          
+		</div><!-- /.card-body -->
 	</div>
 </div>
