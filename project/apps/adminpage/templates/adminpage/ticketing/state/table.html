@@ -40,7 +40,7 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Kode
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Nama
@@ -48,7 +48,7 @@
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Prioritas
-              </th>              
+              </th>
 
               <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
                 Deskripsi
@@ -93,7 +93,7 @@
 
               <td class="align-middle">
                 {{ data.priority }}
-              </td>              
+              </td>
 
               <td class="align-middle">
                 {{ data.description }}
@@ -108,7 +108,7 @@
                       </button>
                     </a>
                   </span>
-  
+
                   <span class="d-lg-inline mx-1">
                     <a data-action="delete" onclick="delete_list(`{% url 'adminpage:setting.ticketing.state.deletelist' %}`, '{{ data.id }}' )">
                       <button type="button" data-rel="tooltip" data-action="delete" title="Delete" class="btn btn-outline-danger shadow-sm btn-bgc-white">
@@ -155,7 +155,7 @@
         "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
       renderer: 'bootstrap'
     })
-    
+
     var $_table = $(tableId).DataTable({
       responsive: true,
 
@@ -168,14 +168,14 @@
         fixedColumnsLeft: 1,
         fixedColumnsRight: 1
       },
-      
+
       // sDom: 'BRfrtlip',
 
       classes: {
         sLength: "dataTables_length text-left w-auto",
       },
 
-    
+
       buttons: {
         dom: {
           button: {
@@ -223,7 +223,7 @@
         ]
       },
 
-      
+
       // first and last column are not sortable
       columnDefs: [
         {
@@ -239,15 +239,15 @@
         {
           orderable: false,
           className: null,
-          targets:   -1        
+          targets:   -1
         },
-        { 
+        {
           responsivePriority: 1,
           targets: 2
         }
       ],
 
-      
+
       // multiple row selection
       select: {
         style: 'multis'
@@ -262,7 +262,7 @@
       }
     })
 
-    
+
     // specify position of table buttons
     $('.table-tools-col' )
     .append( $_table.buttons().container() )
@@ -272,7 +272,7 @@
     .end().append(`
       <a href="{% url 'adminpage:setting.ticketing.state.add' %}">
         <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Add New">
-          <i class="fa fa-plus"></i>
+          <i class="fa fa-plus"></i> Tambah
         </button>
       </a>
       <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-danger border-2 btn-sm ml-2" title="Delete" onclick="delete_list('{% url 'adminpage:setting.ticketing.state.deletelist' %}',get_list_id('${tableId}'))">
@@ -354,7 +354,7 @@
     .find('.row:first-of-type')
     .addClass('border-b-1 brc-default-l3 bgc-blue-l4')
     .next().addClass('mt-n1px')// move the next `.row` up by 1px to go below header's border
-    
+
     // highlight DataTable footer
     $('.dataTables_wrapper').find('.row:last-of-type').addClass('border-t-1 brc-default-l3 mt-n1px bgc-default-l4')
 

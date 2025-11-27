@@ -128,7 +128,7 @@
                 {% endif %}
 
                 {% endif %}
-              </td>              
+              </td>
 
               <td class="align-middle">
                 {{ data.email }}
@@ -196,7 +196,7 @@
 
 {% block javascript %}
 <script>
-  
+
   function set_isactive(url, list_id, isactive){
     let msg = 'Choose items to non activation'
     if (isactive > 0) {
@@ -223,8 +223,8 @@
           const form = document.createElement('form');
           form.method = 'post';
           form.action = url;
-          
-          const params = { 
+
+          const params = {
             'csrfmiddlewaretoken': '{{ csrf_token }}',
             'list_id': list_id,
           }
@@ -267,10 +267,10 @@
         "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
       renderer: 'bootstrap'
     })
-    
+
     var $_table = $(tableId).DataTable({
       responsive: true,
-    
+
       classes: {
         sLength: "dataTables_length text-left w-auto",
       },
@@ -322,7 +322,7 @@
         ]
       },
 
-      
+
       // multiple row selection
       select: {
         style: 'multis'
@@ -334,7 +334,7 @@
       }
     })
 
-    
+
     // specify position of table buttons
     $('.table-tools-col' )
     .append( $_table.buttons().container() )
@@ -343,8 +343,8 @@
     // and add a "+" button
     .end().append(`
       <a href="{% url 'adminpage:account_add' %}">
-        <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Sinkron">
-          <i class="fa fa-plus"></i>
+        <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Tambah Akun">
+          <i class="fa fa-plus"></i> Tambah Akun
         </button>
       </a>
       <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-danger border-2 btn-sm ml-2" title="Delete" onclick="delete_list('{% url 'adminpage:account_deletelist' %}',get_list_id('${tableId}'))">
@@ -437,7 +437,7 @@
     .find('.row:first-of-type')
     .addClass('border-b-1 brc-default-l3 bgc-blue-l4')
     .next().addClass('mt-n1px')// move the next `.row` up by 1px to go below header's border
-    
+
     // highlight DataTable footer
     $('.dataTables_wrapper').find('.row:last-of-type').addClass('border-t-1 brc-default-l3 mt-n1px bgc-default-l4')
 
