@@ -1,19 +1,24 @@
 import datetime
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.urls import reverse
-from django.db import transaction
-from django.contrib.auth.decorators import login_required
-from django.http.response import JsonResponse
-from django.db.models import Count, Sum, OuterRef, Subquery, Max
-
-from apps.services.decorators import group_required, update_ticket, show_ticket
-from apps.services.utils import add_custom_message
-from apps.adminpage.models import Ticket, TicketCategory, TicketAnswer, TicketState, TicketStateDetail, TicketAdmin
-from apps.adminpage.forms.ticketing import TicketCategoryCreateForm, TicketStateCreateForm, TicketCreateForm, TicketAnswerCreateForm
-
 from json import dumps
 
+from apps.adminpage.forms.ticketing import (TicketAnswerCreateForm,
+                                            TicketCategoryCreateForm,
+                                            TicketCreateForm,
+                                            TicketStateCreateForm)
+from apps.adminpage.models import (Ticket, TicketAdmin, TicketAnswer,
+                                   TicketCategory, TicketState,
+                                   TicketStateDetail)
+from apps.services.decorators import group_required, show_ticket, update_ticket
+from apps.services.utils import add_custom_message
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.db.models import Count, F, Max, OuterRef, Subquery, Sum
+from django.db.models import Value as V
+from django.db.models.functions import Concat
+from django.http.response import JsonResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
 
 # **********************************************************
@@ -596,23 +601,87 @@ def bpsdm_ajuan_table(request):
 @group_required('admin', 'bpsdm')
 def bpsdm_ajuan_json(request):
     queryset = Ticket.objects.all()
+
     if request.POST:
         group_list = list(request.user.groups.all().values_list('name', flat=True))
+
+        # filter ticket for bpsdm
         if 'admin' not in group_list and 'bpsdm' in group_list:
-            queryset = queryset.filter(category__in=TicketAdmin.objects.filter(user=request.user).values_list('ticketcategory'))
+            queryset = queryset.filter(
+                category__in=TicketAdmin.objects.filter(user=request.user)
+                .values_list('ticketcategory')
+            )
+
+        # filter by state
         if request.POST.get('state'):
             queryset = queryset.filter(state__code=request.POST.get('state'))
+
+        # filter by year
         if request.POST.get('tahun'):
             queryset = queryset.filter(created_at__year=request.POST.get('tahun'))
-            queryset = queryset.annotate(
-                latest_ticketstatedetail_user_username=Subquery(
-                    TicketStateDetail.objects.filter(ticket=OuterRef('id')).order_by('-id').values('user__username')[:1]
-                    )
-                )
-        data = queryset.values('id', 'user', 'user__username', 'latest_ticketstatedetail_user_username', 'state', 'state__code', 'state__name', 'title', 'description', 'category', 'category__name', 'file', 'rating', 'created_at', 'updated_at')
+
+        # ------------------------------------------------------------------
+        # 💡 Annotasi: Ambil latest ticket state detail
+        # ------------------------------------------------------------------
+        latest_user_first = Subquery(
+            TicketStateDetail.objects.filter(ticket=OuterRef('id'))
+            .order_by('-id')
+            .values('user__first_name')[:1]
+        )
+
+        latest_user_last = Subquery(
+            TicketStateDetail.objects.filter(ticket=OuterRef('id'))
+            .order_by('-id')
+            .values('user__last_name')[:1]
+        )
+
+        queryset = queryset.annotate(
+            # username terakhir
+            latest_ticketstatedetail_user_username=Subquery(
+                TicketStateDetail.objects.filter(ticket=OuterRef('id'))
+                .order_by('-id')
+                .values('user__username')[:1]
+            ),
+            # 🔥 full name terakhir dari TicketStateDetail
+            latest_ticketstatedetail_user_fullname=Concat(
+                latest_user_first,
+                V(' '),
+                latest_user_last
+            ),
+            # 🔥 full name pemilik ticket
+            user_full_name=Concat(
+                F('user__first_name'),
+                V(' '),
+                F('user__last_name')
+            )
+        )
+
+        # ------------------------------------------------------------------
+        # Output JSON
+        # ------------------------------------------------------------------
+        data = queryset.values(
+            'id',
+            'user',
+            'user__username',
+            'user_full_name',   # ← Full name user utama
+            'latest_ticketstatedetail_user_username',
+            'latest_ticketstatedetail_user_fullname',  # ← Full name dari latest state detail
+            'state',
+            'state__code',
+            'state__name',
+            'title',
+            'description',
+            'category',
+            'category__name',
+            'file',
+            'rating',
+            'created_at',
+            'updated_at'
+        )
+
         return JsonResponse(list(data), safe=False)
-    else:
-        return JsonResponse([], safe=False)
+
+    return JsonResponse([], safe=False)
 
 
 @login_required()
