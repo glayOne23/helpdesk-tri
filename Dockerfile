@@ -40,9 +40,4 @@ COPY --from=builder /usr/local/bin/ /usr/local/bin/
 # Copy project source
 COPY ./project $DockerHOME
 
-# Copy entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
 # CMD gunicorn or runserver later
