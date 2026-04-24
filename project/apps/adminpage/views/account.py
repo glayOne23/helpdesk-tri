@@ -46,8 +46,8 @@ def table(request):
 
     # ===[Fetch Data]===
     context['dataaccounts']    = User.objects.all().exclude(is_superuser=True).exclude(is_staff=True).order_by('id')
-    
-    
+
+
     # ===[Render Template]===
     return render(request, 'adminpage/account/table.html', context)
 
@@ -134,7 +134,7 @@ def edit_group(request, id):
             context['formgroupdetails'].save()
 
             messages.success(request, 'Data Edited Successfully', extra_tags=dumps({
-                'redirect'      : reverse('adminpage:account_role'), 
+                'redirect'      : reverse('adminpage:account_role'),
                 'confbtntxt'    : 'Check Data',
                 'cnclbtntxt'    : 'Cancel',
             }))
@@ -188,7 +188,7 @@ def add(request):
 
                 useradmintickets = request.POST.getlist('duallistbox_admintickets[]')
                 TicketAdmin.objects.filter(user=user).delete()
-                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)            
+                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)
                 for category in useradmincategories:
                     TicketAdmin.objects.create(user=user, ticketcategory=category)
                 user.save()
@@ -196,9 +196,9 @@ def add(request):
                 profile = context['formprofile'].save(commit=False)
                 profile.user = user
                 profile.save()
-                
+
                 messages.success(request, 'Data Added Successfully', extra_tags=dumps({
-                    'redirect'      : reverse('adminpage:account_table'), 
+                    'redirect'      : reverse('adminpage:account_table'),
                     'confbtntxt'    : 'Check Data',
                     'cnclbtntxt'    : 'Cancel',
                 }))
@@ -207,8 +207,8 @@ def add(request):
                 messages.error(request, context['formprofile'].errors)
         else:
             messages.error(request, context['formsignup'].errors)
-    
-    
+
+
     # ===[Render Template]===
     return render(request, 'adminpage/account/add.html', context)
 
@@ -233,13 +233,13 @@ def edit(request, id):
     context['duallistbox']      = True
     context['daterange']        = False
     context['countdown']        = False
-    
+
 
     # ===[Check ID IsValid]===
     try:
         user = User.objects.get(id=id)
         context['usergroups'] = user.groups.values_list('id',flat=True)
-        context['useradmintickets'] = user.ticketadmin_user.values_list('ticketcategory__id',flat=True)        
+        context['useradmintickets'] = user.ticketadmin_user.values_list('ticketcategory__id',flat=True)
     except User.DoesNotExist:
         messages.error(request, 'Data Not Found!')
         return redirect('adminpage:account_table')
@@ -268,7 +268,7 @@ def edit(request, id):
                     if request.POST.get('password1') != request.POST.get('password2'):
                         messages.error(request, 'Confirm password is not the same.')
                         return redirect('adminpage:account_edit', id=id)
-                    
+
                     elif len(request.POST.get('password1')) < 8:
                         messages.error(request, 'Your password must contain at least 8 characters.')
                         return redirect('adminpage:account_edit', id=id)
@@ -276,7 +276,7 @@ def edit(request, id):
                     elif request.POST.get('password1').isnumeric():
                         messages.error(request, 'Your password cannot be entirely numeric.')
                         return redirect('adminpage:account_edit', id=id)
-                    
+
                     else:
                         user.set_password(request.POST.get('password1'))
                         user.save()
@@ -289,19 +289,19 @@ def edit(request, id):
 
                 useradmintickets = request.POST.getlist('duallistbox_admintickets[]')
                 TicketAdmin.objects.filter(user=user).delete()
-                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)            
+                useradmincategories = TicketCategory.objects.filter(id__in=useradmintickets)
                 for category in useradmincategories:
                     TicketAdmin.objects.create(user=user, ticketcategory=category)
-                user.save()                
+                user.save()
 
 
                 messages.success(request, 'Data Updated Successfully', extra_tags=dumps({
-                    'redirect'      : reverse('adminpage:account_table'), 
+                    'redirect'      : reverse('adminpage:account_table'),
                     'confbtntxt'    : 'Check Data',
                     'cnclbtntxt'    : 'Cancel',
                 }))
                 return redirect('adminpage:account_edit', id=id)
-                
+
             else:
                 messages.error(request, context['formprofile'].errors)
         else:
@@ -373,7 +373,7 @@ def setisactive(request, mode):
             messages.error(request, 'Data Not Found!')
 
     else:
-        messages.error(request, 'Invalid request!')
+        messages.error(request, 'Invalid request!!')
 
     # ===[Redirect]===
     return redirect('adminpage:account_table')

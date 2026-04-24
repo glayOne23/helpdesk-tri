@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'hijack',
     'crispy_forms',
     'crispy_bootstrap4',
+    # ======[External Apps - Crontab]======
+    'django_crontab',
     # =======[My Own Apps]=======
     'apps.services',
     'apps.landingpage',
@@ -246,3 +248,10 @@ WABLAS_TOKEN            = config('WABLAS_TOKEN',        default='YOUR_TOKEN')
 # ========[CRISPY]=======
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+
+# =======[Cron Jobs]=====
+CRONJOBS = [
+    # Jalankan setiap hari pukul 00:00 - cek tiket in_process > 2 minggu lalu ubah ke finish
+    ('0 0 * * *', 'django.core.management.call_command', ['auto_finish_tickets']),
+]
