@@ -31,6 +31,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     libpq-dev default-libmysqlclient-dev \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
@@ -39,4 +40,9 @@ COPY --from=builder /usr/local/bin/ /usr/local/bin/
 # Copy project source
 COPY ./project $DockerHOME
 
+# Copy entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 # CMD gunicorn or runserver later
