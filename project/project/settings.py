@@ -172,13 +172,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # =====================================================================================================
 
 # =======[App Info]======
-APP_SHORT_NAME          = 'Helpdesk'
-APP_FULL_NAME           = 'Helpdesk DSDMO UMS'
-APP_VERSION             = 'v1.0'
-APP_YEAR                = '2025'
-APP_DEVELOPER           = 'BTI'
-APP_COMPANY_SHORT_NAME  = 'UMS'
-APP_COMPANY_FULL_NAME   = 'DSDMO UMS'
+APP_SHORT_NAME          = config('APP_SHORT_NAME', default='Helpdesk')
+APP_FULL_NAME           = config('APP_FULL_NAME', default='Helpdesk DSDMO UMS')
+APP_VERSION             = config('APP_VERSION', default='v1.0')
+APP_YEAR                = config('APP_YEAR', default='2026')
+APP_DEVELOPER           = config('APP_DEVELOPER', default='DSTI')
+APP_COMPANY_SHORT_NAME  = config('APP_COMPANY_SHORT_NAME', default='UMS')
+APP_COMPANY_FULL_NAME   = config('APP_COMPANY_FULL_NAME', default='DSDMO UMS')
 APP_LOGO                = os.path.join(STATIC_URL,'images/logo/ums_logo_color.svg')
 APP_FAVICON             = os.path.join(STATIC_URL,'images/logo/ums_logo_favicon.ico')
 APP_BASE_URL            = config('APP_BASE_URL', default='') # for email verify

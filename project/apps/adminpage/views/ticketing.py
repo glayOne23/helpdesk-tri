@@ -560,7 +560,7 @@ def user_ajuan_rating_add(request, id):
     return redirect('adminpage:ticketing.user.ajuan.table')
 
 # **********************************************************
-#                   DSDMO - AJUAN
+#                   Admin - AJUAN
 # **********************************************************
 @login_required()
 @group_required('admin', 'bpsdm')
