@@ -41,11 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # ======[External Apps]======
+    'django.contrib.sites',
     'django_cas_ng',
     'hijack.contrib.admin',
     'hijack',
     'crispy_forms',
     'crispy_bootstrap4',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     # ======[External Apps - Crontab]======
     'django_crontab',
     # =======[My Own Apps]=======
@@ -66,6 +72,8 @@ MIDDLEWARE = [
 
     'django_cas_ng.middleware.CASMiddleware',
     'hijack.middleware.HijackUserMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 
@@ -132,7 +140,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # For django cas
     # 'django_cas_ng.backends.CASBackend', # Default django cas backend
     'apps.services.djangocas.CustomCASBackend', # Custom django cas backend
+
+    'allauth.account.auth_backends.AuthenticationBackend', # For django-allauth (Google login)
 ]
+
+SITE_ID = 1
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -213,6 +225,29 @@ CAS_LOGOUT_COMPLETELY   = True
 CAS_IGNORE_REFERER      = True
 CAS_REDIRECT_URL        = '/authentication/signin' # The default is '/'
 CAS_VERSION             = '2'
+
+
+# ======[Google Social Login]======
+# create credentials (OAuth client ID) at https://console.cloud.google.com/apis/credentials
+# authorized redirect URI -> <APP_BASE_URL>/authentication/social/google/login/callback/
+GOOGLE_CLIENT_ID        = config('GOOGLE_CLIENT_ID',     default='YOUR_GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET    = config('GOOGLE_CLIENT_SECRET', default='YOUR_GOOGLE_CLIENT_SECRET')
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': '',
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET  = True # skip allauth's intermediate confirmation page, go straight to Google
+SOCIALACCOUNT_AUTO_SIGNUP   = True # auto create a local account on first Google login (no username step)
+ACCOUNT_EMAIL_VERIFICATION  = 'none' # Google already verifies the email address
 
 
 # =====[API GATEWAY]=====
