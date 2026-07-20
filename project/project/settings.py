@@ -212,6 +212,13 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.ums.ac.id",
 ]
 
+# ==[Reverse Proxy / HTTPS]==
+# The production server sits behind an HTTPS-terminating reverse proxy, which forwards
+# plain HTTP to Django. Without this, request.is_secure() is False and Django (and
+# allauth's Google OAuth redirect_uri) reports "http://" even though the real request
+# was "https://" -> causes Google's redirect_uri_mismatch error in production only.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # ======[Django Cas]=====
 CAS_SERVER_URL          = 'https://auth.ums.ac.id/cas/'
