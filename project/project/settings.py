@@ -293,7 +293,13 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 
 # =======[Cron Jobs]=====
+# Daemon cron menjalankan job TANPA env var container (DB_*, SECRET_KEY, dll) -> job gagal konek DB.
+# Karena itu env di-dump ke /etc/cron.env saat container start (lihat command di docker-compose.yml)
+# lalu di-source sebelum job jalan.
+CRONTAB_COMMAND_PREFIX = '[ -f /etc/cron.env ] && . /etc/cron.env;'
+
 CRONJOBS = [
-    # Jalankan setiap hari pukul 00:00 - cek tiket in_process > 2 minggu lalu ubah ke finish
-    ('0 0 * * *', 'django.core.management.call_command', ['auto_finish_tickets']),
+    # Jalankan setiap hari pukul 00:00 UTC / 07:00 WIB (jam container) - cek tiket in_process > 2 minggu lalu ubah ke finish
+    # Output diarahkan ke stdout container supaya terlihat di `docker logs`
+    ('0 0 * * *', 'django.core.management.call_command', ['auto_finish_tickets'], {}, '>> /proc/1/fd/1 2>&1'),
 ]

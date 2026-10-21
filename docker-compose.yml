@@ -7,7 +7,8 @@
 # services:
 #   web:
 #     image: <link image gitlab> # contoh: gitlab.ums.ac.id:5050/rr867/monev-jurnal:v1.0
-#     command: python manage.py runserver 0.0.0.0:8000
+#     # env di-dump ke /etc/cron.env agar job cron bisa membaca env container (lihat CRONTAB_COMMAND_PREFIX di settings.py)
+#     command: bash -c "(umask 077; set -o posix; export -p > /etc/cron.env) && python manage.py crontab add && cron && python manage.py runserver 0.0.0.0:8000"
 #     ports:
 #       - 8013:8000 # sesuaikan port dengan port yang belum terpakai
 #     restart: always
